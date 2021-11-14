@@ -8,6 +8,6 @@ public class JsonParser {
         if (source.equals("false")) {
             return false;
         }
-        return true;
+        throw new IllegalArgumentException("Input '" + source + "' is not a valid boolean.");
     }
 }

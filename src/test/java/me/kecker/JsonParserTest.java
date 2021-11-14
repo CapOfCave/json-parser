@@ -4,6 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class JsonParserTest {
 
@@ -20,6 +21,12 @@ class JsonParserTest {
     void testParseBooleanFalse() {
         boolean result = JsonParser.parseBoolean("false");
         assertThat(result).isEqualTo(false);
+    }
+
+    @Test
+    @DisplayName("parseBoolean should throw an exception for an input different from true or false")
+    void testParseBooleanThrowsException() {
+        assertThrows(IllegalArgumentException.class, () -> JsonParser.parseBoolean("other"));
     }
 
 }
