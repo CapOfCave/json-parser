@@ -263,7 +263,7 @@ class JsonParseStateTest {
 
     @Test
     @DisplayName("string() should return the input string without quotes")
-    void testParseString() throws UnexpectedCharacterException {
+    void testParseString() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("\"input\"");
         String result = parserState.string();
         assertThat(result).isEqualTo("input");
@@ -279,7 +279,7 @@ class JsonParseStateTest {
 
     @Test
     @DisplayName("string() should return the input string while considering escaped quotes")
-    void testParseStringWithEscapedQuote() throws UnexpectedCharacterException {
+    void testParseStringWithEscapedQuote() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("\"a\\\"b\"");
         String result = parserState.string();
         assertThat(result).isEqualTo("a\"b");
@@ -288,7 +288,7 @@ class JsonParseStateTest {
 
     @Test
     @DisplayName("string() should return the input string while considering escaped backslashes")
-    void testParseStringWithEscapedBackslash() throws UnexpectedCharacterException {
+    void testParseStringWithEscapedBackslash() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("\"a\\\\b\"");
         String result = parserState.string();
         assertThat(result).isEqualTo("a\\b");
@@ -298,19 +298,10 @@ class JsonParseStateTest {
     @ParameterizedTest
     @DisplayName("string() should return the input string while considering escaped control characters")
     @MethodSource("provideInputForTestParseStringWithEscapedControlCharacters")
-    void testParseStringWithEscapedControlCharacters(String input, String expected) throws UnexpectedCharacterException {
+    void testParseStringWithEscapedControlCharacters(String input, String expected) throws JsonParseException {
         JsonParseState parserState = new JsonParseState("\"" + input + "\"");
         String result = parserState.string();
         assertThat(result).isEqualTo(expected);
-        assertThat(parserState.reachedEnd()).isEqualTo(true);
-    }
-
-    @Test
-    @DisplayName("string() should return the input string while considering escaped unicode characters")
-    void testParseStringWithEscapedUnicodeCharacters() throws UnexpectedCharacterException {
-        JsonParseState parserState = new JsonParseState("\"a\\u0041\\u00Ae\"");
-        String result = parserState.string();
-        assertThat(result).isEqualTo("aA\u00AE");
         assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
@@ -323,6 +314,29 @@ class JsonParseStateTest {
                 Arguments.of("\\r", "\r"),
                 Arguments.of("\\t", "\t")
         );
+    }
+
+    @Test
+    @DisplayName("string() should return the input string while considering escaped unicode characters")
+    void testParseStringWithEscapedUnicodeCharacters() throws JsonParseException {
+        JsonParseState parserState = new JsonParseState("\"a\\u0041\\u00Ae\"");
+        String result = parserState.string();
+        assertThat(result).isEqualTo("aA\u00AE");
+        assertThat(parserState.reachedEnd()).isEqualTo(true);
+    }
+
+    @Test
+    @DisplayName("string() should throw exception for illegal escape")
+    void testParseStringIllegalEscape() {
+        JsonParseState parserState = new JsonParseState("\"\\a\"");
+        assertThrows(JsonParseException.class, parserState::string);
+    }
+
+    @Test
+    @DisplayName("string() should throw exception for trailing backslash")
+    void testParseStringTrailingBackslash() {
+        JsonParseState parserState = new JsonParseState("\"\\");
+        assertThrows(JsonParseException.class, parserState::string);
     }
 
     @Test

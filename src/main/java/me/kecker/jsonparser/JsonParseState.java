@@ -133,7 +133,7 @@ public class JsonParseState {
 
     }
 
-    public String string() throws UnexpectedCharacterException {
+    public String string() throws JsonParseException {
         assertCharacterAndAdvance(QUOTE);
         StringBuilder wordBuilder = new StringBuilder();
         while (!reachedEnd() && current() != QUOTE) {
@@ -151,7 +151,10 @@ public class JsonParseState {
 
     }
 
-    private String escape() {
+    private String escape() throws JsonParseException {
+        if (reachedEnd()) {
+            throw new JsonParseException("Illegal trailing backslash!");
+        }
         if (current() == 'u') {
             advance(); // skip the 'u'
             int total = 0;
@@ -171,7 +174,7 @@ public class JsonParseState {
             case 'n' -> "\n";
             case 'r' -> "\r";
             case 't' -> "\t";
-            default -> throw new IllegalStateException("Unexpected value: " + current());
+            default -> throw new JsonParseException("Unexpected value: " + current());
         };
         advance();
         return escape;
