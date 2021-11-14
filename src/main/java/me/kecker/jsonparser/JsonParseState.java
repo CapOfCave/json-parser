@@ -101,8 +101,7 @@ public class JsonParseState {
         while (!reachedEnd() && current() != QUOTE) {
             if (current() == BACKSLASH) {
                 advance();
-                assertCharacterAndAdvance(QUOTE);
-                wordBuilder.append(QUOTE);
+                wordBuilder.append(escape());
             }
             wordBuilder.append(current());
             advance();
@@ -111,6 +110,16 @@ public class JsonParseState {
         assertCharacterAndAdvance(QUOTE);
         return word;
 
+    }
+
+    private String escape() {
+        String escape = switch (current()) {
+            case '"' -> "\"";
+            case '\\' -> "\\";
+            default -> throw new IllegalStateException("Unexpected value: " + current());
+        };
+        advance();
+        return escape;
     }
 
     public Map<String, Object> object() throws JsonParseException {
