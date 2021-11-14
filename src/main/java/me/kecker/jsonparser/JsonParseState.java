@@ -29,6 +29,7 @@ public class JsonParseState {
     }
 
     public char current() {
+        assert !reachedEnd();
         return current;
     }
 
@@ -50,7 +51,7 @@ public class JsonParseState {
 
     public NullType nullType() throws JsonParseException {
         StringBuilder wordBuilder = new StringBuilder();
-        while (Character.isAlphabetic(current()) && !reachedEnd()) {
+        while (!reachedEnd() && Character.isAlphabetic(current())) {
             wordBuilder.append(current());
             advance();
         }
@@ -63,7 +64,7 @@ public class JsonParseState {
 
     public boolean bool() throws IllegalTokenException {
         StringBuilder wordBuilder = new StringBuilder();
-        while (Character.isAlphabetic(current()) && !reachedEnd()) {
+        while (!reachedEnd() && Character.isAlphabetic(current())) {
             wordBuilder.append(current());
             advance();
         }
@@ -90,7 +91,7 @@ public class JsonParseState {
     public String string() throws UnexpectedCharacterException {
         assertCharacterAndAdvance(QUOTE);
         StringBuilder wordBuilder = new StringBuilder();
-        while (current() != QUOTE && !reachedEnd()) {
+        while (!reachedEnd() && current() != QUOTE) {
             wordBuilder.append(current());
             advance();
         }
