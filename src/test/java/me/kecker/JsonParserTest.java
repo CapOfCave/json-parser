@@ -30,6 +30,13 @@ class JsonParserTest {
     }
 
     @Test
+    @DisplayName("parseString should return the input string without quotes")
+    void testParseString() {
+        String result = JsonParser.parseString("\"input\"");
+        assertThat(result).isEqualTo("input");
+    }
+
+    @Test
     @DisplayName("parse should return Boolean value for input 'true'")
     void testParseForInputTrue() {
         Object result = JsonParser.parse("true");

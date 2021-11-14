@@ -15,4 +15,9 @@ public class JsonParser {
         }
         throw new IllegalArgumentException("Input '" + source + "' is not a valid boolean.");
     }
+
+    public static String parseString(String source) {
+        return source.substring(1, source.length() - 1);
+    }
+
 }
