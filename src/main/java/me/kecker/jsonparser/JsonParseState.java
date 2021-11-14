@@ -132,7 +132,12 @@ public class JsonParseState {
             case QUOTE -> string();
             case CURLY_BRACE_OPEN -> object();
             case BRACKETS_OPEN -> array();
-            default -> throw new IllegalStateException("Unexpected value: " + current());
+            default -> {
+                if (Character.isDigit(current())) {
+                    yield number();
+                }
+                throw new IllegalStateException("Unexpected value: " + current());
+            }
         };
     }
 

@@ -235,6 +235,16 @@ class JsonParseStateTest {
     }
 
     @Test
+    @DisplayName("value() should return integer for integer input")
+    void testParseIntegerValue() throws JsonParseException {
+        JsonParseState parserState = new JsonParseState("2345");
+        Object result = parserState.value();
+        assertThat(result)
+                .isInstanceOf(Integer.class)
+                .isEqualTo(2345);
+    }
+
+    @Test
     @DisplayName("value() should return unquoted string for quoted string input")
     void testParseStringValue() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("\"value\"");
