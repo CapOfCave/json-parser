@@ -110,6 +110,16 @@ class JsonParseStateTest {
     }
 
     @Test
+    @DisplayName("number() should return Integer for integer input")
+    void testNumberInteger() throws JsonParseException {
+        JsonParseState parserState = new JsonParseState("1234");
+        Number result = parserState.number();
+        assertThat(result)
+                .isInstanceOf(Integer.class)
+                .isEqualTo(1234);
+    }
+
+    @Test
     @DisplayName("bool() should throw exception for any non-boolean input")
     void testBooleanOtherInput() {
         JsonParseState parserState = new JsonParseState("other");

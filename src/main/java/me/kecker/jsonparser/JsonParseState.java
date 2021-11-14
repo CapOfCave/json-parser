@@ -77,6 +77,16 @@ public class JsonParseState {
         throw new IllegalTokenException("Input '" + word + "' is not a valid boolean.");
     }
 
+    public Number number() {
+        StringBuilder wordBuilder = new StringBuilder();
+        while (!reachedEnd() && Character.isDigit(current())) {
+            wordBuilder.append(current());
+            advance();
+        }
+        String number = wordBuilder.toString();
+        return Integer.parseInt(number);
+    }
+
     public String string() throws UnexpectedCharacterException {
         assertCharacterAndAdvance(QUOTE);
         StringBuilder wordBuilder = new StringBuilder();
@@ -125,4 +135,5 @@ public class JsonParseState {
             default -> throw new IllegalStateException("Unexpected value: " + current());
         };
     }
+
 }
