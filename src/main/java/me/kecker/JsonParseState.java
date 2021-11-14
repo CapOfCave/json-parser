@@ -20,4 +20,8 @@ public class JsonParseState {
         this.currentIndex++;
         this.current = this.source.charAt(this.currentIndex);
     }
+
+    public boolean reachedEnd() {
+        return false;
+    }
 }
