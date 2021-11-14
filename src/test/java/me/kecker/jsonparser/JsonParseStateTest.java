@@ -4,7 +4,6 @@ import me.kecker.jsonparser.exceptions.IllegalTokenException;
 import me.kecker.jsonparser.exceptions.JsonParseException;
 import me.kecker.jsonparser.exceptions.UnexpectedCharacterException;
 import org.assertj.core.api.InstanceOfAssertFactories;
-import org.assertj.core.api.InstanceOfAssertFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -148,6 +147,39 @@ class JsonParseStateTest {
     }
 
     @Test
+    @DisplayName("array() should return empty Array for empty input")
+    void testParseEmptyArray() throws JsonParseException {
+        JsonParseState parserState = new JsonParseState("[]");
+        Object[] result = parserState.array();
+        assertThat(result).isEmpty();
+        assertThat(parserState.reachedEnd()).isEqualTo(true);
+    }
+
+    @Test
+    @DisplayName("array() should return empty Object for empty input with whitespace")
+    void testParseEmptyArrayWithWhitespace() throws JsonParseException {
+        JsonParseState parserState = new JsonParseState("[ \n]");
+        Object[] result = parserState.array();
+        assertThat(result).isEmpty();
+        assertThat(parserState.reachedEnd()).isEqualTo(true);
+    }
+
+    @Test
+    @DisplayName("array() should throw exception if not starting with opening brackets")
+    void testParseEmptyArrayWithoutStartingBrackets() {
+        JsonParseState parserState = new JsonParseState(" ]");
+        assertThrows(UnexpectedCharacterException.class, parserState::array);
+    }
+
+    @Test
+    @DisplayName("array() should throw exception if not ending with closing brackets")
+    void testParseEmptyArrayWithoutEndingBrackets() {
+        JsonParseState parserState = new JsonParseState("[ ");
+        assertThrows(UnexpectedCharacterException.class, parserState::array);
+    }
+
+
+    @Test
     @DisplayName("value() should return boolean true for boolean input with value true")
     void testParseBooleanValueTrue() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("true");
@@ -184,6 +216,16 @@ class JsonParseStateTest {
         Object result = parserState.value();
         assertThat(result)
                 .asInstanceOf(InstanceOfAssertFactories.MAP)
+                .isEmpty();
+    }
+
+    @Test
+    @DisplayName("value() should return Array for array input")
+    void testParseArrayValue() throws JsonParseException {
+        JsonParseState parserState = new JsonParseState("[]");
+        Object result = parserState.value();
+        assertThat(result)
+                .asInstanceOf(InstanceOfAssertFactories.ARRAY)
                 .isEmpty();
     }
 

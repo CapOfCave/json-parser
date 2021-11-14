@@ -13,8 +13,10 @@ public class JsonParseState {
     private static final char QUOTE = '"';
     private static final char CURLY_BRACE_OPEN = '{';
     private static final char CURLY_BRACE_CLOSE = '}';
+    private static final char BRACKETS_OPEN = '[';
+    private static final char BRACKETS_CLOSE = ']';
 
-    private String source;
+    private final String source;
     private char current;
     private int currentIndex;
 
@@ -78,6 +80,13 @@ public class JsonParseState {
         return Collections.emptyMap();
     }
 
+    public Object[] array() throws JsonParseException {
+        assertCharacterAndAdvance(BRACKETS_OPEN);
+        whitespace();
+        assertCharacterAndAdvance(BRACKETS_CLOSE);
+        return new Object[0];
+    }
+
     private void assertCharacterAndAdvance(char expected) throws UnexpectedCharacterException {
         assertCharacter(expected);
         advance();
@@ -93,10 +102,11 @@ public class JsonParseState {
     }
 
     public Object value() throws JsonParseException {
-        return switch(current()) {
+        return switch (current()) {
             case 't', 'f' -> bool();
             case QUOTE -> string();
             case CURLY_BRACE_OPEN -> object();
+            case BRACKETS_OPEN -> array();
             default -> throw new IllegalStateException("Unexpected value: " + current());
         };
     }
