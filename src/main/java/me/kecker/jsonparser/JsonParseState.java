@@ -91,7 +91,8 @@ public class JsonParseState {
 
     public BigDecimal number() throws IllegalNumberException {
         StringBuilder numberStringBuilder = new StringBuilder();
-        while (!reachedEnd() && (Character.isDigit(current()) || current() == '-' || current() == '.')) {
+        while (!reachedEnd() && (Character.isDigit(current()) || current() == '-' || current() == '.' || current() == 'e') ) {
+
             numberStringBuilder.append(current());
             advance();
         }

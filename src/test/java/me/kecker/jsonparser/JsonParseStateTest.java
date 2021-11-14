@@ -205,6 +205,15 @@ class JsonParseStateTest {
     }
 
     @Test
+    @DisplayName("number() should allow exponents")
+    void testNumberExponent() throws IllegalNumberException {
+        JsonParseState parserState = new JsonParseState("1e2");
+        BigDecimal result = parserState.number();
+        assertThat(result).isEqualByComparingTo("100");
+        assertThat(parserState.reachedEnd()).isEqualTo(true);
+    }
+
+    @Test
     @DisplayName("bool() should throw exception for any non-boolean input")
     void testBooleanOtherInput() {
         JsonParseState parserState = new JsonParseState("other");
