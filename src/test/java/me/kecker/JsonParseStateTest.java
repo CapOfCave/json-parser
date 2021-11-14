@@ -6,6 +6,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class JsonParseStateTest {
 
@@ -68,4 +69,28 @@ class JsonParseStateTest {
         parserState.whitespace();
         assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
+
+    @Test
+    @DisplayName("bool() should return true for input 'true'")
+    void testBooleanTrue() {
+        JsonParseState parserState = new JsonParseState("true");
+        boolean result = parserState.bool();
+        assertThat(result).isEqualTo(true);
+    }
+
+    @Test
+    @DisplayName("bool() should return false for input 'false'")
+    void testBooleanFalse() {
+        JsonParseState parserState = new JsonParseState("false");
+        boolean result = parserState.bool();
+        assertThat(result).isEqualTo(false);
+    }
+
+    @Test
+    @DisplayName("bool() should throw exception for any non-boolean input")
+    void testBooleanOtherInput() {
+        JsonParseState parserState = new JsonParseState("other");
+        assertThrows(IllegalArgumentException.class, parserState::bool);
+    }
+
 }

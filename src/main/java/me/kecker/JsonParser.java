@@ -12,6 +12,7 @@ public class JsonParser {
         return parseBoolean(source);
     }
 
+    @Deprecated
     public static boolean parseBoolean(String source) {
         if (source.equals("true")) {
             return true;

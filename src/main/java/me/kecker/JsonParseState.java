@@ -35,4 +35,20 @@ public class JsonParseState {
             this.advance();
         }
     }
+
+    public boolean bool() {
+        StringBuilder wordBuilder = new StringBuilder();
+        while (Character.isAlphabetic(current()) && !reachedEnd()) {
+            wordBuilder.append(current());
+            advance();
+        }
+        String word = wordBuilder.toString();
+        if (word.equals("true")) {
+            return true;
+        }
+        if (word.equals("false")) {
+            return false;
+        }
+        throw new IllegalArgumentException("Input '" + word + "' is not a valid boolean.");
+    }
 }
