@@ -118,7 +118,7 @@ class JsonParseStateTest {
     @ParameterizedTest
     @DisplayName("number() should throw exception for non numeric input")
     @ValueSource(strings = {"A", "."})
-    void testNumberNonNumericInput(String input) throws JsonParseException {
+    void testNumberNonNumericInput(String input) {
         JsonParseState parserState = new JsonParseState(input);
         assertThrows(IllegalNumberException.class, parserState::number);
     }
@@ -194,7 +194,7 @@ class JsonParseStateTest {
 
     @Test
     @DisplayName("number() should throw exception for trailing .")
-    void testNumberTrailingPoint() throws JsonParseException {
+    void testNumberTrailingPoint() {
         JsonParseState parserState = new JsonParseState("12.");
         assertThrows(IllegalNumberException.class, parserState::number);
     }
@@ -524,6 +524,15 @@ class JsonParseStateTest {
         assertThat(result)
                 .asInstanceOf(InstanceOfAssertFactories.ARRAY)
                 .isEmpty();
+        assertThat(parserState.reachedEnd()).isEqualTo(true);
+    }
+
+    @Test
+    @DisplayName("json() should return element")
+    void testJson() throws JsonParseException {
+        JsonParseState parserState = new JsonParseState("  \"test\"  ");
+        Object result = parserState.json();
+        assertThat(result).isEqualTo("test");
         assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 }

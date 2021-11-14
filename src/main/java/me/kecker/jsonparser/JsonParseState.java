@@ -263,4 +263,8 @@ public class JsonParseState {
         whitespace();
         return value;
     }
+
+    public Object json() throws JsonParseException {
+        return element();
+    }
 }
