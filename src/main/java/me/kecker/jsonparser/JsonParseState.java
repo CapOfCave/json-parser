@@ -114,6 +114,16 @@ public class JsonParseState {
     }
 
     private String escape() {
+        if (current() == 'u') {
+            advance(); // skip the 'u'
+            int total = 0;
+            for (int i = 0; i < 4; i++) {
+                total *= 16;
+                total += hex();
+            }
+            return new String(Character.toChars(total));
+        }
+
         String escape = switch (current()) {
             case '"' -> "\"";
             case '\\' -> "\\";
@@ -127,6 +137,15 @@ public class JsonParseState {
         };
         advance();
         return escape;
+    }
+
+    private int hex() {
+        int i = Character.getNumericValue(current());
+        if (i > 16) {
+            throw new IllegalArgumentException("'" + current() + "' is not a hex character.");
+        }
+        advance();
+        return i;
     }
 
     public Map<String, Object> object() throws JsonParseException {

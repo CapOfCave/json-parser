@@ -177,6 +177,15 @@ class JsonParseStateTest {
         assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
+    @Test
+    @DisplayName("string() should return the input string while considering escaped unicode characters")
+    void testParseStringWithEscapedUnicodeCharacters() throws UnexpectedCharacterException {
+        JsonParseState parserState = new JsonParseState("\"a\\u0041\\u00Ae\"");
+        String result = parserState.string();
+        assertThat(result).isEqualTo("aA\u00AE");
+        assertThat(parserState.reachedEnd()).isEqualTo(true);
+    }
+
     private static Stream<Arguments> provideInputForTestParseStringWithEscapedControlCharacters() {
         return Stream.of(
                 Arguments.of("\\/", "/"),
