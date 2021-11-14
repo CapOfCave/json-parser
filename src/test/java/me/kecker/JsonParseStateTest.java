@@ -41,4 +41,12 @@ class JsonParseStateTest {
         boolean reachedEnd = parserState.reachedEnd();
         assertThat(reachedEnd).isEqualTo(true);
     }
+
+    @Test
+    @DisplayName("whitespace should skip spaces")
+    void testWhitespaceSkipsSpaces() {
+        JsonParseState parserState = new JsonParseState("   a");
+        parserState.whitespace();
+        assertThat(parserState.current()).isEqualTo('a');
+    }
 }

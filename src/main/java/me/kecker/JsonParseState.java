@@ -24,4 +24,10 @@ public class JsonParseState {
     public boolean reachedEnd() {
         return currentIndex == this.source.length() - 1;
     }
+
+    public void whitespace() {
+        while(this.current == ' ') {
+            this.advance();
+        }
+    }
 }
