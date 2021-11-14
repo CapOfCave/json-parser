@@ -22,11 +22,12 @@ public class JsonParseState {
 
     public void advance() {
         this.currentIndex++;
-        this.current = this.source.charAt(this.currentIndex);
+        this.current = reachedEnd() ? 0 : this.source.charAt(this.currentIndex);
+
     }
 
     public boolean reachedEnd() {
-        return currentIndex == this.source.length() - 1;
+        return currentIndex == this.source.length();
     }
 
     public void whitespace() {
