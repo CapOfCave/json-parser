@@ -1,6 +1,7 @@
 package me.kecker.jsonparser;
 
 import me.kecker.jsonparser.exceptions.IllegalTokenException;
+import me.kecker.jsonparser.exceptions.JsonParseException;
 import me.kecker.jsonparser.exceptions.UnexpectedCharacterException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -142,6 +143,26 @@ class JsonParseStateTest {
     void testParseEmptyObjectWithoutEndingBraces() {
         JsonParseState parserState = new JsonParseState("{ ");
         assertThrows(UnexpectedCharacterException.class, parserState::object);
+    }
+
+    @Test
+    @DisplayName("value() should return boolean true for boolean member input with value true")
+    void testParseBooleanMemberTrue() throws JsonParseException {
+        JsonParseState parserState = new JsonParseState("true");
+        Object result = parserState.value();
+        assertThat(result)
+                .isInstanceOf(Boolean.class)
+                .isEqualTo(Boolean.TRUE);
+    }
+
+    @Test
+    @DisplayName("value() should return boolean false for boolean member input with value false")
+    void testParseBooleanMemberFalse() throws JsonParseException {
+        JsonParseState parserState = new JsonParseState("false");
+        Object result = parserState.value();
+        assertThat(result)
+                .isInstanceOf(Boolean.class)
+                .isEqualTo(Boolean.FALSE);
     }
 
 }

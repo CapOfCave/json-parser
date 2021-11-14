@@ -1,6 +1,7 @@
 package me.kecker.jsonparser;
 
 import me.kecker.jsonparser.exceptions.IllegalTokenException;
+import me.kecker.jsonparser.exceptions.JsonParseException;
 import me.kecker.jsonparser.exceptions.UnexpectedCharacterException;
 
 import java.util.Collections;
@@ -89,5 +90,9 @@ public class JsonParseState {
         if (current() != expected) {
             throw new UnexpectedCharacterException(current(), expected);
         }
+    }
+
+    public Object value() throws JsonParseException {
+        return bool();
     }
 }
