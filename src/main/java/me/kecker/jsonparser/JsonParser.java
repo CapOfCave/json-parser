@@ -1,4 +1,4 @@
-package me.kecker;
+package me.kecker.jsonparser;
 
 import java.util.Collections;
 import java.util.Map;

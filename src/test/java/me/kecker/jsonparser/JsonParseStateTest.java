@@ -1,4 +1,4 @@
-package me.kecker;
+package me.kecker.jsonparser;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
