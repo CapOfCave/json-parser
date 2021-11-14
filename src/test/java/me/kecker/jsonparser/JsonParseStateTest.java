@@ -115,6 +115,14 @@ class JsonParseStateTest {
         assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
+    @ParameterizedTest
+    @DisplayName("number() should throw exception for non numeric input")
+    @ValueSource(strings = {"A", "."})
+    void testNumberNonNumericInput(String input) throws JsonParseException {
+        JsonParseState parserState = new JsonParseState(input);
+        assertThrows(IllegalNumberException.class, parserState::number);
+    }
+
     @Test
     @DisplayName("number() should return Integer for integer input")
     void testNumberInteger() throws JsonParseException {

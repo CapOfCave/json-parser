@@ -122,7 +122,7 @@ public class JsonParseState {
         boolean firstNumberZero = current() == ZERO;
 
         int absoluteValue = 0;
-        while (!reachedEnd() && Character.isDigit(current())) {
+        while (!reachedEnd() && Character.isLetterOrDigit(current())) {
             absoluteValue *= 10;
             absoluteValue += NumberUtils.toDecimal(current());
             advance();
