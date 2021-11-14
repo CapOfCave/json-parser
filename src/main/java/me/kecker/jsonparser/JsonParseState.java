@@ -249,7 +249,7 @@ public class JsonParseState {
             case CURLY_BRACE_OPEN -> object();
             case BRACKETS_OPEN -> array();
             default -> {
-                if (Character.isDigit(current())) {
+                if (Character.isDigit(current()) || current() == '-') {
                     yield number();
                 }
                 throw new IllegalStateException("Unexpected value: " + current());
