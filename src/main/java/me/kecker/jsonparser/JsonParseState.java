@@ -18,6 +18,7 @@ public class JsonParseState {
     private static final char CURLY_BRACE_CLOSE = '}';
     private static final char BRACKETS_OPEN = '[';
     private static final char BRACKETS_CLOSE = ']';
+    private static final char COMMA = ',';
 
     private final String source;
     private char current;
@@ -58,7 +59,7 @@ public class JsonParseState {
             advance();
         }
         String word = wordBuilder.toString();
-        if (!word.equals("null")){
+        if (!word.equals("null")) {
             throw new IllegalTokenException("Input '" + word + "' is not a valid nullType.");
         }
         return null;
@@ -116,6 +117,10 @@ public class JsonParseState {
         List<Object> elements = new ArrayList<>();
         if (!reachedEnd() && current() != BRACKETS_CLOSE) {
             elements.add(element());
+            while (!reachedEnd() && current() == COMMA) {
+                assertCharacterAndAdvance(COMMA);
+                elements.add(element());
+            }
         }
         assertCharacterAndAdvance(BRACKETS_CLOSE);
         return elements.toArray(Object[]::new);

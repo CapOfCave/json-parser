@@ -219,6 +219,17 @@ class JsonParseStateTest {
         assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
+    @Test
+    @DisplayName("array() should return correct result for array with multiple elements")
+    void testParseArrayWithMultipleElements() throws JsonParseException {
+        JsonParseState parserState = new JsonParseState("[\"string1\",\"string2\",\"string3\"]");
+        Object[] result = parserState.array();
+        assertThat(result).hasSize(3);
+        assertThat(result[0]).isInstanceOf(String.class).isEqualTo("string1");
+        assertThat(result[1]).isInstanceOf(String.class).isEqualTo("string2");
+        assertThat(result[2]).isInstanceOf(String.class).isEqualTo("string3");
+        assertThat(parserState.reachedEnd()).isEqualTo(true);
+    }
 
     @Test
     @DisplayName("value() should return null for null input")
