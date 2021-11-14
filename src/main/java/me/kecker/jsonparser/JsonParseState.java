@@ -114,7 +114,9 @@ public class JsonParseState {
     }
 
     public Map.Entry<String, Object> member() throws JsonParseException {
+        whitespace();
         String key = string();
+        whitespace();
         assertCharacterAndAdvance(COLON);
         Object value = element();
         return new AbstractMap.SimpleImmutableEntry<>(key, value);

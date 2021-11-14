@@ -152,7 +152,18 @@ class JsonParseStateTest {
         Map.Entry<String, Object> member = parserState.member();
         assertThat(member.getKey()).isEqualTo("key");
         assertThat(member.getValue()).isEqualTo("value");
+        assertThat(parserState.reachedEnd()).isEqualTo(true);
 
+    }
+
+    @Test
+    @DisplayName("member() should return a key-value pair ignoring whitespace")
+    void testMemberShouldReturnKeyValuePairIgnoringWhitespace() throws JsonParseException {
+        JsonParseState parserState = new JsonParseState(" \"key\" : \"value\" ");
+        Map.Entry<String, Object> member = parserState.member();
+        assertThat(member.getKey()).isEqualTo("key");
+        assertThat(member.getValue()).isEqualTo("value");
+        assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
     @Test
