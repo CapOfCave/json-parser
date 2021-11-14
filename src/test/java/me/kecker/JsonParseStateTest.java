@@ -27,9 +27,18 @@ class JsonParseStateTest {
 
     @Test
     @DisplayName("reachedEnd should be false if the parser has not reached the last char")
-    public void testReachedEnd() {
+    public void testNotReachedEnd() {
         JsonParseState parserState = new JsonParseState("AB");
         boolean reachedEnd = parserState.reachedEnd();
         assertThat(reachedEnd).isEqualTo(false);
+    }
+
+    @Test
+    @DisplayName("reachedEnd should be true if the parser has reached the last char")
+    public void testReachedEnd() {
+        JsonParseState parserState = new JsonParseState("AB");
+        parserState.advance();
+        boolean reachedEnd = parserState.reachedEnd();
+        assertThat(reachedEnd).isEqualTo(true);
     }
 }

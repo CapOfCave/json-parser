@@ -22,6 +22,6 @@ public class JsonParseState {
     }
 
     public boolean reachedEnd() {
-        return false;
+        return currentIndex == this.source.length() - 1;
     }
 }
