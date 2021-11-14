@@ -91,8 +91,7 @@ public class JsonParseState {
 
     public BigDecimal number() throws IllegalNumberException {
         StringBuilder numberStringBuilder = new StringBuilder();
-        while (!reachedEnd() && (Character.isDigit(current()) || current() == '-' || current() == '.' || current() == 'e') ) {
-
+        while (!reachedEnd() && mightOccurInNumber(current())) {
             numberStringBuilder.append(current());
             advance();
         }
@@ -114,6 +113,16 @@ public class JsonParseState {
         } catch (NumberFormatException e) {
             throw new IllegalNumberException(e);
         }
+    }
+
+    private static boolean mightOccurInNumber(char character) {
+        return Character.isDigit(character)
+                || character == '-'
+                || character == '.'
+                || character == 'e'
+                || character == 'E';
+
+
     }
 
     public String string() throws UnexpectedCharacterException {
@@ -232,7 +241,7 @@ public class JsonParseState {
             case CURLY_BRACE_OPEN -> object();
             case BRACKETS_OPEN -> array();
             default -> {
-                if (Character.isDigit(current()) || current() == '-') {
+                if (mightOccurInNumber(current())) {
                     yield number();
                 }
                 throw new IllegalStateException("Unexpected value: " + current());

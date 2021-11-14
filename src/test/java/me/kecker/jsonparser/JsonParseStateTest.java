@@ -205,9 +205,18 @@ class JsonParseStateTest {
     }
 
     @Test
-    @DisplayName("number() should allow exponents")
-    void testNumberExponent() throws IllegalNumberException {
+    @DisplayName("number() should allow exponents with lowercase e")
+    void testNumberExponentWithLowercaseE() throws IllegalNumberException {
         JsonParseState parserState = new JsonParseState("1e2");
+        BigDecimal result = parserState.number();
+        assertThat(result).isEqualByComparingTo("100");
+        assertThat(parserState.reachedEnd()).isEqualTo(true);
+    }
+
+    @Test
+    @DisplayName("number() should allow exponents with capital E")
+    void testNumberExponentWithCapitalE() throws IllegalNumberException {
+        JsonParseState parserState = new JsonParseState("1E2");
         BigDecimal result = parserState.number();
         assertThat(result).isEqualByComparingTo("100");
         assertThat(parserState.reachedEnd()).isEqualTo(true);
