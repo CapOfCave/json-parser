@@ -96,6 +96,7 @@ public class JsonParseState {
         return switch(current()) {
             case 't', 'f' -> bool();
             case QUOTE -> string();
+            case CURLY_BRACE_OPEN -> object();
             default -> throw new IllegalStateException("Unexpected value: " + current());
         };
     }

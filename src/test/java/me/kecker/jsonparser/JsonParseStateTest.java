@@ -3,6 +3,8 @@ package me.kecker.jsonparser;
 import me.kecker.jsonparser.exceptions.IllegalTokenException;
 import me.kecker.jsonparser.exceptions.JsonParseException;
 import me.kecker.jsonparser.exceptions.UnexpectedCharacterException;
+import org.assertj.core.api.InstanceOfAssertFactories;
+import org.assertj.core.api.InstanceOfAssertFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -173,6 +175,16 @@ class JsonParseStateTest {
         assertThat(result)
                 .isInstanceOf(String.class)
                 .isEqualTo("value");
+    }
+
+    @Test
+    @DisplayName("value() should return Map for object input")
+    void testParseObjectValue() throws JsonParseException {
+        JsonParseState parserState = new JsonParseState("{}");
+        Object result = parserState.value();
+        assertThat(result)
+                .asInstanceOf(InstanceOfAssertFactories.MAP)
+                .isEmpty();
     }
 
 }
