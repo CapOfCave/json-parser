@@ -29,4 +29,21 @@ class JsonParserTest {
         assertThrows(IllegalArgumentException.class, () -> JsonParser.parseBoolean("other"));
     }
 
+    @Test
+    @DisplayName("parse should return Boolean value for input 'true'")
+    void testParseForInputTrue() {
+        Object result = JsonParser.parse("true");
+        assertThat(result)
+                .isInstanceOf(Boolean.class)
+                .isEqualTo(Boolean.TRUE);
+    }
+
+    @Test
+    @DisplayName("parse should return Boolean value for input 'false'")
+    void testParseForInputFalse() {
+        Object result = JsonParser.parse("false");
+        assertThat(result)
+                .isInstanceOf(Boolean.class)
+                .isEqualTo(Boolean.FALSE);
+    }
 }

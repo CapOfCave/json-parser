@@ -1,6 +1,11 @@
 package me.kecker;
 
 public class JsonParser {
+
+    public static Object parse(String source) {
+        return parseBoolean(source);
+    }
+
     public static boolean parseBoolean(String source) {
         if (source.equals("true")) {
             return true;
