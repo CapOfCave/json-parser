@@ -5,6 +5,7 @@ import me.kecker.jsonparser.exceptions.JsonParseException;
 import me.kecker.jsonparser.exceptions.UnexpectedCharacterException;
 
 import javax.lang.model.type.NullType;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -19,6 +20,7 @@ public class JsonParseState {
     private static final char BRACKETS_OPEN = '[';
     private static final char BRACKETS_CLOSE = ']';
     private static final char COMMA = ',';
+    private static final char COLON = ':';
 
     private final String source;
     private char current;
@@ -109,6 +111,13 @@ public class JsonParseState {
         whitespace();
         assertCharacterAndAdvance(CURLY_BRACE_CLOSE);
         return Collections.emptyMap();
+    }
+
+    public Map.Entry<String, Object> member() throws JsonParseException {
+        String key = string();
+        assertCharacterAndAdvance(COLON);
+        Object value = element();
+        return new AbstractMap.SimpleImmutableEntry<>(key, value);
     }
 
     public Object[] array() throws JsonParseException {

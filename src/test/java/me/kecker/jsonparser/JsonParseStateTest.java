@@ -146,6 +146,16 @@ class JsonParseStateTest {
     }
 
     @Test
+    @DisplayName("member() should return a key-value pair")
+    void testMemberShouldReturnKeyValuePair() throws JsonParseException {
+        JsonParseState parserState = new JsonParseState("\"key\":\"value\"");
+        Map.Entry<String, Object> member = parserState.member();
+        assertThat(member.getKey()).isEqualTo("key");
+        assertThat(member.getValue()).isEqualTo("value");
+
+    }
+
+    @Test
     @DisplayName("object() should return empty Map for empty object")
     void testParseEmptyObject() throws UnexpectedCharacterException {
         JsonParseState parserState = new JsonParseState("{}");
@@ -187,7 +197,7 @@ class JsonParseStateTest {
     }
 
     @Test
-    @DisplayName("array() should return empty Object for empty input with whitespace")
+    @DisplayName("array() should return empty Array for empty input with whitespace")
     void testParseEmptyArrayWithWhitespace() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("[ \n]");
         Object[] result = parserState.array();
