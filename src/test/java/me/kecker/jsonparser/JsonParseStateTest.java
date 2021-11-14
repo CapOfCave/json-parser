@@ -146,6 +146,15 @@ class JsonParseStateTest {
     }
 
     @Test
+    @DisplayName("string() should return the input string while considering escaped quotes")
+    void testParseStringWithEscapedQuote() throws UnexpectedCharacterException {
+        JsonParseState parserState = new JsonParseState("\"a\\\"b\"");
+        String result = parserState.string();
+        assertThat(result).isEqualTo("a\"b");
+        assertThat(parserState.reachedEnd()).isEqualTo(true);
+    }
+
+    @Test
     @DisplayName("member() should return a key-value pair")
     void testMemberShouldReturnKeyValuePair() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("\"key\":\"value\"");

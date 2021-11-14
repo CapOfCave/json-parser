@@ -22,6 +22,7 @@ public class JsonParseState {
     private static final char BRACKETS_CLOSE = ']';
     private static final char COMMA = ',';
     private static final char COLON = ':';
+    private static final char BACKSLASH = '\\';
 
     private final String source;
     private char current;
@@ -98,6 +99,11 @@ public class JsonParseState {
         assertCharacterAndAdvance(QUOTE);
         StringBuilder wordBuilder = new StringBuilder();
         while (!reachedEnd() && current() != QUOTE) {
+            if (current() == BACKSLASH) {
+                advance();
+                assertCharacterAndAdvance(QUOTE);
+                wordBuilder.append(QUOTE);
+            }
             wordBuilder.append(current());
             advance();
         }
