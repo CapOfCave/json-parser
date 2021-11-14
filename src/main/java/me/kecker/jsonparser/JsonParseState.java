@@ -93,6 +93,10 @@ public class JsonParseState {
     }
 
     public Object value() throws JsonParseException {
-        return bool();
+        return switch(current()) {
+            case 't', 'f' -> bool();
+            case QUOTE -> string();
+            default -> throw new IllegalStateException("Unexpected value: " + current());
+        };
     }
 }

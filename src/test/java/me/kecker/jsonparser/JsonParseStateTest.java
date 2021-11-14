@@ -146,8 +146,8 @@ class JsonParseStateTest {
     }
 
     @Test
-    @DisplayName("value() should return boolean true for boolean member input with value true")
-    void testParseBooleanMemberTrue() throws JsonParseException {
+    @DisplayName("value() should return boolean true for boolean input with value true")
+    void testParseBooleanValueTrue() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("true");
         Object result = parserState.value();
         assertThat(result)
@@ -156,13 +156,23 @@ class JsonParseStateTest {
     }
 
     @Test
-    @DisplayName("value() should return boolean false for boolean member input with value false")
-    void testParseBooleanMemberFalse() throws JsonParseException {
+    @DisplayName("value() should return boolean false for boolean input with value false")
+    void testParseBooleanValueFalse() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("false");
         Object result = parserState.value();
         assertThat(result)
                 .isInstanceOf(Boolean.class)
                 .isEqualTo(Boolean.FALSE);
+    }
+
+    @Test
+    @DisplayName("value() should return unquoted string for quoted string input")
+    void testParseStringValue() throws JsonParseException {
+        JsonParseState parserState = new JsonParseState("\"value\"");
+        Object result = parserState.value();
+        assertThat(result)
+                .isInstanceOf(String.class)
+                .isEqualTo("value");
     }
 
 }
