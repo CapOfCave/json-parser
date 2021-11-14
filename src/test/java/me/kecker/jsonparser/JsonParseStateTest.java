@@ -246,6 +246,15 @@ class JsonParseStateTest {
     }
 
     @Test
+    @DisplayName("number() input betweeen 0 and 1 should not throw exception ")
+    void testNumberBetween0And1() throws IllegalNumberException {
+        JsonParseState parserState = new JsonParseState("0.1");
+        BigDecimal result = parserState.number();
+        assertThat(result).isEqualByComparingTo("0.1");
+        assertThat(parserState.reachedEnd()).isEqualTo(true);
+    }
+
+    @Test
     @DisplayName("bool() should throw exception for any non-boolean input")
     void testBooleanOtherInput() {
         JsonParseState parserState = new JsonParseState("other");

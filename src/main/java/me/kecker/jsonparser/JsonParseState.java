@@ -99,18 +99,19 @@ public class JsonParseState {
         String stringValue = numberStringBuilder.toString();
         int absoluteValueStartIndex = stringValue.startsWith("-") ? 1 : 0;
         int exponentStartIndex = Math.max(stringValue.lastIndexOf('e'), stringValue.lastIndexOf('E'));
-        String absoluteValueWithoutExponent =
+        String absoluteValue = stringValue.substring(absoluteValueStartIndex);
+        String stringValueWithoutExponent =
                 exponentStartIndex == -1 ?
-                        stringValue.substring(absoluteValueStartIndex) :
-                        stringValue.substring(absoluteValueStartIndex, exponentStartIndex);
+                        stringValue :
+                        stringValue.substring(0, exponentStartIndex);
 
-        if ((absoluteValueWithoutExponent.length() > 1 && absoluteValueWithoutExponent.startsWith("0"))) {
+        if ((absoluteValue.matches("0\\d+.*"))) {
             throw new IllegalNumberException("Number must not start with a leading zero, but was \"" + stringValue + "\"");
         }
-        if (absoluteValueWithoutExponent.startsWith(".")) {
+        if (absoluteValue.startsWith(".")) {
             throw new IllegalNumberException("Number must not start with a leading point, but was \"" + stringValue + "\"");
         }
-        if (absoluteValueWithoutExponent.endsWith(".")) {
+        if (stringValue.endsWith(".") || stringValueWithoutExponent.endsWith(".")) {
             throw new IllegalNumberException("Number must not end with a trailing point, but was \"" + stringValue + "\"");
         }
 
@@ -124,6 +125,7 @@ public class JsonParseState {
     private static boolean mightOccurInNumber(char character) {
         return Character.isDigit(character)
                 || character == '-'
+                || character == '+'
                 || character == '.'
                 || character == 'e'
                 || character == 'E';
