@@ -191,6 +191,20 @@ class JsonParseStateTest {
     }
 
     @Test
+    @DisplayName("number() should throw exception for leading point.")
+    void testNumberLeadingPoint() {
+        JsonParseState parserState = new JsonParseState(".5");
+        assertThrows(IllegalNumberException.class, parserState::number);
+    }
+
+    @Test
+    @DisplayName("number() should throw exception for leading point.")
+    void testNegativeNumberLeadingPoint() {
+        JsonParseState parserState = new JsonParseState("-.5");
+        assertThrows(IllegalNumberException.class, parserState::number);
+    }
+
+    @Test
     @DisplayName("bool() should throw exception for any non-boolean input")
     void testBooleanOtherInput() {
         JsonParseState parserState = new JsonParseState("other");
