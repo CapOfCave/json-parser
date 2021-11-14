@@ -1,6 +1,10 @@
 package me.kecker;
 
+import java.util.Set;
+
 public class JsonParseState {
+    private static final Set<Character> WHITESPACE = Set.of('\u0020', '\n', '\r', '\u0009');
+
     private String source;
     private char current;
     private int currentIndex;
@@ -26,7 +30,7 @@ public class JsonParseState {
     }
 
     public void whitespace() {
-        while(this.current == ' ') {
+        while (WHITESPACE.contains(this.current)) {
             this.advance();
         }
     }

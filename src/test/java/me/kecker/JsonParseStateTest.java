@@ -2,6 +2,8 @@ package me.kecker;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -46,6 +48,15 @@ class JsonParseStateTest {
     @DisplayName("whitespace should skip spaces")
     void testWhitespaceSkipsSpaces() {
         JsonParseState parserState = new JsonParseState("   a");
+        parserState.whitespace();
+        assertThat(parserState.current()).isEqualTo('a');
+    }
+
+    @ParameterizedTest
+    @DisplayName("whitespace should skip different whitespace characters")
+    @ValueSource(strings = {"\u0020", "\n", "\r", "\u0009"})
+    public void testSkipWhitespaceCharacter(String whitespace) {
+        JsonParseState parserState = new JsonParseState(whitespace + "a");
         parserState.whitespace();
         assertThat(parserState.current()).isEqualTo('a');
     }
