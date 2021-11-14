@@ -4,6 +4,7 @@ import me.kecker.jsonparser.exceptions.IllegalTokenException;
 import me.kecker.jsonparser.exceptions.JsonParseException;
 import me.kecker.jsonparser.exceptions.UnexpectedCharacterException;
 
+import javax.lang.model.type.NullType;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
@@ -45,6 +46,19 @@ public class JsonParseState {
         while (WHITESPACE.contains(this.current) && !this.reachedEnd()) {
             this.advance();
         }
+    }
+
+    public NullType nullType() throws JsonParseException {
+        StringBuilder wordBuilder = new StringBuilder();
+        while (Character.isAlphabetic(current()) && !reachedEnd()) {
+            wordBuilder.append(current());
+            advance();
+        }
+        String word = wordBuilder.toString();
+        if (!word.equals("null")){
+            throw new IllegalTokenException("Input '" + word + "' is not a valid nullType.");
+        }
+        return null;
     }
 
     public boolean bool() throws IllegalTokenException {
@@ -104,6 +118,7 @@ public class JsonParseState {
     public Object value() throws JsonParseException {
         return switch (current()) {
             case 't', 'f' -> bool();
+            case 'n' -> nullType();
             case QUOTE -> string();
             case CURLY_BRACE_OPEN -> object();
             case BRACKETS_OPEN -> array();

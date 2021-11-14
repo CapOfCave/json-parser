@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import javax.lang.model.type.NullType;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -74,6 +75,22 @@ class JsonParseStateTest {
         JsonParseState parserState = new JsonParseState("   ");
         parserState.whitespace();
         assertThat(parserState.reachedEnd()).isEqualTo(true);
+    }
+
+    @Test
+    @DisplayName("nullType() should pass for input 'null'")
+    void testNullType() throws JsonParseException {
+        JsonParseState parserState = new JsonParseState("null");
+        NullType result = parserState.nullType();
+        assertThat(result).isNull();
+        assertThat(parserState.reachedEnd()).isEqualTo(true);
+    }
+
+    @Test
+    @DisplayName("nullType() should throw exception for any other input")
+    void testNullTypeWrongInput() {
+        JsonParseState parserState = new JsonParseState("other");
+        assertThrows(IllegalTokenException.class, parserState::nullType);
     }
 
     @Test
@@ -178,6 +195,14 @@ class JsonParseStateTest {
         assertThrows(UnexpectedCharacterException.class, parserState::array);
     }
 
+
+    @Test
+    @DisplayName("value() should return null for null input")
+    void testParseNullValue() throws JsonParseException {
+        JsonParseState parserState = new JsonParseState("null");
+        Object result = parserState.value();
+        assertThat(result).isNull();
+    }
 
     @Test
     @DisplayName("value() should return boolean true for boolean input with value true")
