@@ -102,6 +102,7 @@ public class JsonParseState {
             if (current() == BACKSLASH) {
                 advance();
                 wordBuilder.append(escape());
+                continue;
             }
             wordBuilder.append(current());
             advance();
@@ -116,6 +117,12 @@ public class JsonParseState {
         String escape = switch (current()) {
             case '"' -> "\"";
             case '\\' -> "\\";
+            case '/' -> "/";
+            case 'b' -> "\b";
+            case 'f' -> "\f";
+            case 'n' -> "\n";
+            case 'r' -> "\r";
+            case 't' -> "\t";
             default -> throw new IllegalStateException("Unexpected value: " + current());
         };
         advance();

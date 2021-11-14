@@ -7,10 +7,14 @@ import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import javax.lang.model.type.NullType;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -161,6 +165,27 @@ class JsonParseStateTest {
         String result = parserState.string();
         assertThat(result).isEqualTo("a\\b");
         assertThat(parserState.reachedEnd()).isEqualTo(true);
+    }
+
+    @ParameterizedTest
+    @DisplayName("string() should return the input string while considering escaped control characters")
+    @MethodSource("provideInputForTestParseStringWithEscapedControlCharacters")
+    void testParseStringWithEscapedControlCharacters(String input, String expected) throws UnexpectedCharacterException {
+        JsonParseState parserState = new JsonParseState("\"" + input + "\"");
+        String result = parserState.string();
+        assertThat(result).isEqualTo(expected);
+        assertThat(parserState.reachedEnd()).isEqualTo(true);
+    }
+
+    private static Stream<Arguments> provideInputForTestParseStringWithEscapedControlCharacters() {
+        return Stream.of(
+                Arguments.of("\\/", "/"),
+                Arguments.of("\\b", "\b"),
+                Arguments.of("\\f", "\f"),
+                Arguments.of("\\n", "\n"),
+                Arguments.of("\\r", "\r"),
+                Arguments.of("\\t", "\t")
+        );
     }
 
     @Test
