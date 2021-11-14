@@ -265,6 +265,10 @@ public class JsonParseState {
     }
 
     public Object json() throws JsonParseException {
-        return element();
+        Object element = element();
+        if (!reachedEnd()) {
+            throw new JsonParseException("JSON standard allows only one top-level value.");
+        }
+        return element;
     }
 }

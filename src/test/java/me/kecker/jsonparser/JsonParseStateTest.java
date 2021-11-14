@@ -606,4 +606,11 @@ class JsonParseStateTest {
         assertThat(result).isEqualTo("test");
         assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
+
+    @Test
+    @DisplayName("json() should throw exception if there are remaining characters")
+    void testJsonRemainingCharacters() {
+        JsonParseState parserState = new JsonParseState("  \"test\" \" ");
+        assertThrows(JsonParseException.class, parserState::json);
+    }
 }
