@@ -209,6 +209,16 @@ class JsonParseStateTest {
         assertThrows(UnexpectedCharacterException.class, parserState::array);
     }
 
+    @Test
+    @DisplayName("array() should return correct result for array with one element")
+    void testParseArrayWithOneElement() throws JsonParseException {
+        JsonParseState parserState = new JsonParseState("[\"string\"]");
+        Object[] result = parserState.array();
+        assertThat(result).hasSize(1);
+        assertThat(result[0]).isInstanceOf(String.class).isEqualTo("string");
+        assertThat(parserState.reachedEnd()).isEqualTo(true);
+    }
+
 
     @Test
     @DisplayName("value() should return null for null input")

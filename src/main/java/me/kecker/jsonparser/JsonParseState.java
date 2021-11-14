@@ -5,7 +5,9 @@ import me.kecker.jsonparser.exceptions.JsonParseException;
 import me.kecker.jsonparser.exceptions.UnexpectedCharacterException;
 
 import javax.lang.model.type.NullType;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -111,8 +113,12 @@ public class JsonParseState {
     public Object[] array() throws JsonParseException {
         assertCharacterAndAdvance(BRACKETS_OPEN);
         whitespace();
+        List<Object> elements = new ArrayList<>();
+        if (!reachedEnd() && current() != BRACKETS_CLOSE) {
+            elements.add(element());
+        }
         assertCharacterAndAdvance(BRACKETS_CLOSE);
-        return new Object[0];
+        return elements.toArray(Object[]::new);
     }
 
     private void assertCharacterAndAdvance(char expected) throws UnexpectedCharacterException {
@@ -125,7 +131,7 @@ public class JsonParseState {
             throw new UnexpectedCharacterException(expected);
         }
         if (current() != expected) {
-            throw new UnexpectedCharacterException(current(), expected);
+            throw new UnexpectedCharacterException(expected, current());
         }
     }
 
