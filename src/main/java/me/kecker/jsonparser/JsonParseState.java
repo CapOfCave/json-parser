@@ -92,6 +92,9 @@ public class JsonParseState {
             advance();
         }
         String number = wordBuilder.toString();
+        if (number.length() > 1 && number.startsWith("0")) {
+            throw new NumberFormatException("Number must not start with 0, but was '" + number + "'.");
+        }
         return Integer.parseInt(number);
     }
 

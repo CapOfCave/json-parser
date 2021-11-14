@@ -127,6 +127,24 @@ class JsonParseStateTest {
     }
 
     @Test
+    @DisplayName("number() should return 0 for input 0")
+    void testNumber0() throws JsonParseException {
+        JsonParseState parserState = new JsonParseState("0");
+        Number result = parserState.number();
+        assertThat(result)
+                .isInstanceOf(Integer.class)
+                .isEqualTo(0);
+        assertThat(parserState.reachedEnd()).isEqualTo(true);
+    }
+
+    @Test
+    @DisplayName("number() should throw exception when first of many digits is 0")
+    void testNumberIntegerStartingWith0() {
+        JsonParseState parserState = new JsonParseState("012");
+        assertThrows(NumberFormatException.class, parserState::number);
+    }
+
+    @Test
     @DisplayName("bool() should throw exception for any non-boolean input")
     void testBooleanOtherInput() {
         JsonParseState parserState = new JsonParseState("other");
