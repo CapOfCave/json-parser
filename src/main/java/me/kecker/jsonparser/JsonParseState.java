@@ -95,7 +95,10 @@ public class JsonParseState {
             wordBuilder.append(current());
             advance();
         }
-        return wordBuilder.toString();
+        String word = wordBuilder.toString();
+        assertCharacterAndAdvance(QUOTE);
+        return word;
+
     }
 
     public Map<String, Object> object() throws UnexpectedCharacterException {

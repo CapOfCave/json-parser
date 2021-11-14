@@ -99,6 +99,7 @@ class JsonParseStateTest {
         JsonParseState parserState = new JsonParseState("true");
         boolean result = parserState.bool();
         assertThat(result).isEqualTo(true);
+        assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
     @Test
@@ -107,6 +108,7 @@ class JsonParseStateTest {
         JsonParseState parserState = new JsonParseState("false");
         boolean result = parserState.bool();
         assertThat(result).isEqualTo(false);
+        assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
     @Test
@@ -117,6 +119,7 @@ class JsonParseStateTest {
         assertThat(result)
                 .isInstanceOf(Integer.class)
                 .isEqualTo(1234);
+        assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
     @Test
@@ -132,6 +135,7 @@ class JsonParseStateTest {
         JsonParseState parserState = new JsonParseState("\"input\"");
         String result = parserState.string();
         assertThat(result).isEqualTo("input");
+        assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
     @Test
@@ -212,6 +216,7 @@ class JsonParseStateTest {
         JsonParseState parserState = new JsonParseState("null");
         Object result = parserState.value();
         assertThat(result).isNull();
+        assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
     @Test
@@ -222,6 +227,7 @@ class JsonParseStateTest {
         assertThat(result)
                 .isInstanceOf(Boolean.class)
                 .isEqualTo(Boolean.TRUE);
+        assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
     @Test
@@ -232,6 +238,7 @@ class JsonParseStateTest {
         assertThat(result)
                 .isInstanceOf(Boolean.class)
                 .isEqualTo(Boolean.FALSE);
+        assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
     @Test
@@ -242,6 +249,7 @@ class JsonParseStateTest {
         assertThat(result)
                 .isInstanceOf(Integer.class)
                 .isEqualTo(2345);
+        assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
     @Test
@@ -252,6 +260,7 @@ class JsonParseStateTest {
         assertThat(result)
                 .isInstanceOf(String.class)
                 .isEqualTo("value");
+        assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
     @Test
@@ -262,6 +271,7 @@ class JsonParseStateTest {
         assertThat(result)
                 .asInstanceOf(InstanceOfAssertFactories.MAP)
                 .isEmpty();
+        assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
     @Test
@@ -272,6 +282,7 @@ class JsonParseStateTest {
         assertThat(result)
                 .asInstanceOf(InstanceOfAssertFactories.ARRAY)
                 .isEmpty();
+        assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
     @Test
