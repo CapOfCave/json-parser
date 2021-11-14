@@ -570,6 +570,13 @@ class JsonParseStateTest {
     }
 
     @Test
+    @DisplayName("value() should throw JsonParseException for unexpected input")
+    void testValueUnexpectedInput() {
+        JsonParseState parserState = new JsonParseState("a");
+        assertThrows(JsonParseException.class, parserState::value);
+    }
+
+    @Test
     @DisplayName("element() should return value ignoring leading whitespace")
     void testElementLeadingWhitespace() throws JsonParseException {
         JsonParseState parserState = new JsonParseState(" []");

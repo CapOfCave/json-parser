@@ -252,7 +252,7 @@ public class JsonParseState {
                 if (mightOccurInNumber(current())) {
                     yield number();
                 }
-                throw new IllegalStateException("Unexpected value: " + current());
+                throw new JsonParseException("Unexpected value: " + current());
             }
         };
     }
