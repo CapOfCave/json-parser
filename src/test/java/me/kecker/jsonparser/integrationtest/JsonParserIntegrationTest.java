@@ -30,11 +30,32 @@ class JsonParserIntegrationTest {
         assertThrows(JsonParseException.class, () -> JsonParser.parse(input));
     }
 
+    @Disabled
+    @ParameterizedTest
+    @MethodSource("indifferentFileNamesProvider")
+    void testIndifferentExampleFiles(String fileName) {
+        String input = ResourceLoader.loadFile(fileName);
+        System.out.println(fileName);
+        try {
+            JsonParser.parse(input);
+        } catch (JsonParseException e) {
+            // JsonParseExceptions are allowed as the result does not matter
+        }
+    }
+
     private static Stream<String> fileNamesToAcceptProvider() {
-        return ResourceLoader.streamTestCaseNames().filter(s -> s.startsWith("y"));
+        return getFilteredExampleData("y");
     }
 
     private static Stream<String> fileNamesToRejectProvider() {
-        return ResourceLoader.streamTestCaseNames().filter(s -> s.startsWith("n"));
+        return getFilteredExampleData("n");
+    }
+
+    private static Stream<String> indifferentFileNamesProvider() {
+        return getFilteredExampleData("i");
+    }
+
+    private static Stream<String> getFilteredExampleData(String y) {
+        return ResourceLoader.streamTestCaseNames().filter(s -> s.startsWith(y));
     }
 }
