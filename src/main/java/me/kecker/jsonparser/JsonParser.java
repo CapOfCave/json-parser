@@ -11,4 +11,8 @@ public class JsonParser {
         JsonParseState jsonParseState = new JsonParseState(source);
         return jsonParseState.json();
     }
+
+    private JsonParser() {
+        // class should not be instantiated
+    }
 }
