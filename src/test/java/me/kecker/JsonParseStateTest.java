@@ -93,4 +93,12 @@ class JsonParseStateTest {
         assertThrows(IllegalArgumentException.class, parserState::bool);
     }
 
+    @Test
+    @DisplayName("string() should return the input string without quotes")
+    void testParseString() {
+        JsonParseState parserState = new JsonParseState("\"input\"");
+        String result = parserState.string();
+        assertThat(result).isEqualTo("input");
+    }
+
 }

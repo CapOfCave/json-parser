@@ -51,4 +51,14 @@ public class JsonParseState {
         }
         throw new IllegalArgumentException("Input '" + word + "' is not a valid boolean.");
     }
+
+    public String string() {
+        advance();
+        StringBuilder wordBuilder = new StringBuilder();
+        while (current() != '"' && !reachedEnd() ) {
+            wordBuilder.append(current());
+            advance();
+        }
+        return wordBuilder.toString();
+    }
 }
