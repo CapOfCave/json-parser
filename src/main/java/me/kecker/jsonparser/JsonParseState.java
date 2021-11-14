@@ -97,14 +97,20 @@ public class JsonParseState {
         }
 
         String stringValue = numberStringBuilder.toString();
-        String absoluteStringValue = stringValue.startsWith("-") ? stringValue.substring(1) : stringValue;
-        if ((absoluteStringValue.length() > 1 && absoluteStringValue.startsWith("0"))) {
+        int absoluteValueStartIndex = stringValue.startsWith("-") ? 1 : 0;
+        int exponentStartIndex = Math.max(stringValue.lastIndexOf('e'), stringValue.lastIndexOf('E'));
+        String absoluteValueWithoutExponent =
+                exponentStartIndex == -1 ?
+                        stringValue.substring(absoluteValueStartIndex) :
+                        stringValue.substring(absoluteValueStartIndex, exponentStartIndex);
+
+        if ((absoluteValueWithoutExponent.length() > 1 && absoluteValueWithoutExponent.startsWith("0"))) {
             throw new IllegalNumberException("Number must not start with a leading zero, but was \"" + stringValue + "\"");
         }
-        if (absoluteStringValue.startsWith(".")) {
+        if (absoluteValueWithoutExponent.startsWith(".")) {
             throw new IllegalNumberException("Number must not start with a leading point, but was \"" + stringValue + "\"");
         }
-        if (stringValue.endsWith(".")) {
+        if (absoluteValueWithoutExponent.endsWith(".")) {
             throw new IllegalNumberException("Number must not end with a trailing point, but was \"" + stringValue + "\"");
         }
 

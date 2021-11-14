@@ -191,6 +191,20 @@ class JsonParseStateTest {
     }
 
     @Test
+    @DisplayName("number() should throw exception for trailing point before exponent.")
+    void testNumberTrailingPointBeforeExponent() {
+        JsonParseState parserState = new JsonParseState("12.e5");
+        assertThrows(IllegalNumberException.class, parserState::number);
+    }
+
+    @Test
+    @DisplayName("number() should throw exception for trailing point after exponent.")
+    void testNumberTrailingPointAfterExponent() {
+        JsonParseState parserState = new JsonParseState("12e5.");
+        assertThrows(IllegalNumberException.class, parserState::number);
+    }
+
+    @Test
     @DisplayName("number() should throw exception for leading point.")
     void testNumberLeadingPoint() {
         JsonParseState parserState = new JsonParseState(".5");
@@ -219,6 +233,15 @@ class JsonParseStateTest {
         JsonParseState parserState = new JsonParseState("1E2");
         BigDecimal result = parserState.number();
         assertThat(result).isEqualByComparingTo("100");
+        assertThat(parserState.reachedEnd()).isEqualTo(true);
+    }
+
+    @Test
+    @DisplayName("number() should not throw exception when having the form 0eXXX")
+    void testNumberZeroWithExponent() throws IllegalNumberException {
+        JsonParseState parserState = new JsonParseState("0e5");
+        BigDecimal result = parserState.number();
+        assertThat(result).isEqualByComparingTo("0");
         assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
