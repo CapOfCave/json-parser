@@ -30,7 +30,7 @@ public class JsonParseState {
     }
 
     public void whitespace() {
-        while (WHITESPACE.contains(this.current)) {
+        while (WHITESPACE.contains(this.current) && !this.reachedEnd()) {
             this.advance();
         }
     }

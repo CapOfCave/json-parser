@@ -60,4 +60,12 @@ class JsonParseStateTest {
         parserState.whitespace();
         assertThat(parserState.current()).isEqualTo('a');
     }
+
+    @Test
+    @DisplayName("whitespace should skip trailing spaces")
+    void testWhitespaceSkipsTrailingSpaces() {
+        JsonParseState parserState = new JsonParseState("   ");
+        parserState.whitespace();
+        assertThat(parserState.reachedEnd()).isEqualTo(true);
+    }
 }
