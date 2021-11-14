@@ -274,4 +274,25 @@ class JsonParseStateTest {
                 .isEmpty();
     }
 
+    @Test
+    @DisplayName("element() should return value ignoring leading whitespace")
+    void testElementLeadingWhitespace() throws JsonParseException {
+        JsonParseState parserState = new JsonParseState(" []");
+        Object result = parserState.element();
+        assertThat(result)
+                .asInstanceOf(InstanceOfAssertFactories.ARRAY)
+                .isEmpty();
+        assertThat(parserState.reachedEnd()).isEqualTo(true);
+    }
+
+    @Test
+    @DisplayName("element() should return value ignoring trailing whitespace")
+    void testElementTrailingWhitespace() throws JsonParseException {
+        JsonParseState parserState = new JsonParseState("[]  ");
+        Object result = parserState.element();
+        assertThat(result)
+                .asInstanceOf(InstanceOfAssertFactories.ARRAY)
+                .isEmpty();
+        assertThat(parserState.reachedEnd()).isEqualTo(true);
+    }
 }

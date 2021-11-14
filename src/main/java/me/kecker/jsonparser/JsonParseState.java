@@ -141,4 +141,10 @@ public class JsonParseState {
         };
     }
 
+    public Object element() throws JsonParseException {
+        whitespace();
+        Object value = value();
+        whitespace();
+        return value;
+    }
 }
