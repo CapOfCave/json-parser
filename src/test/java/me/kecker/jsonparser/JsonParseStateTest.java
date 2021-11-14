@@ -218,6 +218,28 @@ class JsonParseStateTest {
     }
 
     @Test
+    @DisplayName("object() should return correct result for object with multiple members")
+    void testParseObjectWithMultipleMembers() throws JsonParseException {
+        JsonParseState parserState = new JsonParseState("{\"key1\":1234,\"key2\":\"string\",\"key3\":null}");
+        Map<String, Object> result = parserState.object();
+        assertThat(result.get("key1")).isEqualTo(1234);
+        assertThat(result.get("key2")).isEqualTo("string");
+        assertThat(result.get("key3")).isNull();
+        assertThat(parserState.reachedEnd()).isEqualTo(true);
+    }
+
+    @Test
+    @DisplayName("object() should return correct result for object with multiple members ignoring whitespace")
+    void testParseObjectWithMultipleMembersIgnoringWhitespace() throws JsonParseException {
+        JsonParseState parserState = new JsonParseState("{ \"key1\" : 1234 , \"key2\" : \"string\" , \"key3\" : null }");
+        Map<String, Object> result = parserState.object();
+        assertThat(result.get("key1")).isEqualTo(1234);
+        assertThat(result.get("key2")).isEqualTo("string");
+        assertThat(result.get("key3")).isNull();
+        assertThat(parserState.reachedEnd()).isEqualTo(true);
+    }
+
+    @Test
     @DisplayName("array() should return empty Array for empty input")
     void testParseEmptyArray() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("[]");

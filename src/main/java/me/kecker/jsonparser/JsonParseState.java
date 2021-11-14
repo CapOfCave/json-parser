@@ -112,8 +112,13 @@ public class JsonParseState {
         whitespace();
         Map<String, Object> members = new HashMap<>();
         if (!reachedEnd() && current() != CURLY_BRACE_CLOSE) {
-            Map.Entry<String, Object> member = member();
-            members.put(member.getKey(), member.getValue());
+            Map.Entry<String, Object> firstMember = member();
+            members.put(firstMember.getKey(), firstMember.getValue());
+            while (!reachedEnd() && current() == COMMA) {
+                assertCharacterAndAdvance(COMMA);
+                Map.Entry<String, Object> additionalMember = member();
+                members.put(additionalMember.getKey(), additionalMember.getValue());
+            }
         }
         assertCharacterAndAdvance(CURLY_BRACE_CLOSE);
         return members;
