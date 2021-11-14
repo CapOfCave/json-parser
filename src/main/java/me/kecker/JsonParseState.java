@@ -70,6 +70,7 @@ public class JsonParseState {
 
     public Map<String, Object> object() {
         advance();
+        whitespace();
         advance();
         return Collections.emptyMap();
     }

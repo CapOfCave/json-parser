@@ -119,4 +119,13 @@ class JsonParseStateTest {
         assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
+    @Test
+    @DisplayName("object should return empty Map for empty object with whitespace")
+    void testParseEmptyObjectWithWhitespace() {
+        JsonParseState parserState = new JsonParseState("{ \n}");
+        Map<String, Object> result = parserState.object();
+        assertThat(result).isEmpty();
+        assertThat(parserState.reachedEnd()).isEqualTo(true);
+    }
+
 }
