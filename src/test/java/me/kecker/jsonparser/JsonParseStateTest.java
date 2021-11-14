@@ -13,6 +13,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import javax.lang.model.type.NullType;
+import java.math.BigDecimal;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -127,10 +128,8 @@ class JsonParseStateTest {
     @DisplayName("number() should return Integer for integer input")
     void testNumberInteger() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("1234");
-        Number result = parserState.number();
-        assertThat(result)
-                .isInstanceOf(Integer.class)
-                .isEqualTo(1234);
+        BigDecimal result = parserState.number();
+        assertThat(result).isEqualByComparingTo("1234");
         assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
@@ -138,10 +137,8 @@ class JsonParseStateTest {
     @DisplayName("number() should return 0 for input 0")
     void testNumber0() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("0");
-        Number result = parserState.number();
-        assertThat(result)
-                .isInstanceOf(Integer.class)
-                .isEqualTo(0);
+        BigDecimal result = parserState.number();
+        assertThat(result).isEqualByComparingTo("0");
         assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
@@ -156,10 +153,8 @@ class JsonParseStateTest {
     @DisplayName("number() should return Integer for negative integer input")
     void testNumberNegativeInteger() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("-1234");
-        Number result = parserState.number();
-        assertThat(result)
-                .isInstanceOf(Integer.class)
-                .isEqualTo(-1234);
+        BigDecimal result = parserState.number();
+        assertThat(result).isEqualByComparingTo(new BigDecimal("-1234"));
         assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
@@ -167,10 +162,8 @@ class JsonParseStateTest {
     @DisplayName("number() should return 0 for input -0")
     void testNumberNegative0() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("-0");
-        Number result = parserState.number();
-        assertThat(result)
-                .isInstanceOf(Integer.class)
-                .isEqualTo(0);
+        BigDecimal result = parserState.number();
+        assertThat(result).isEqualByComparingTo("0");
         assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
@@ -185,15 +178,13 @@ class JsonParseStateTest {
     @DisplayName("number() should return Double for floating point input")
     void testNumberFloat() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("12.34");
-        Number result = parserState.number();
-        assertThat(result)
-                .isInstanceOf(Double.class)
-                .isEqualTo(12.34);
+        BigDecimal result = parserState.number();
+        assertThat(result).isEqualByComparingTo("12.34");
         assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
     @Test
-    @DisplayName("number() should throw exception for trailing .")
+    @DisplayName("number() should throw exception for trailing point.")
     void testNumberTrailingPoint() {
         JsonParseState parserState = new JsonParseState("12.");
         assertThrows(IllegalNumberException.class, parserState::number);
@@ -338,7 +329,7 @@ class JsonParseStateTest {
     void testParseObjectWithOneMember() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("{\"key\":1234}");
         Map<String, Object> result = parserState.object();
-        assertThat(result.get("key")).isEqualTo(1234);
+        assertThat((BigDecimal) result.get("key")).isEqualByComparingTo("1234");
         assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
@@ -347,7 +338,7 @@ class JsonParseStateTest {
     void testParseObjectWithMultipleMembers() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("{\"key1\":1234,\"key2\":\"string\",\"key3\":null}");
         Map<String, Object> result = parserState.object();
-        assertThat(result.get("key1")).isEqualTo(1234);
+        assertThat((BigDecimal) result.get("key1")).isEqualByComparingTo("1234");
         assertThat(result.get("key2")).isEqualTo("string");
         assertThat(result.get("key3")).isNull();
         assertThat(parserState.reachedEnd()).isEqualTo(true);
@@ -358,7 +349,7 @@ class JsonParseStateTest {
     void testParseObjectWithMultipleMembersIgnoringWhitespace() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("{ \"key1\" : 1234 , \"key2\" : \"string\" , \"key3\" : null }");
         Map<String, Object> result = parserState.object();
-        assertThat(result.get("key1")).isEqualTo(1234);
+        assertThat((BigDecimal) result.get("key1")).isEqualByComparingTo("1234");
         assertThat(result.get("key2")).isEqualTo("string");
         assertThat(result.get("key3")).isNull();
         assertThat(parserState.reachedEnd()).isEqualTo(true);
@@ -466,9 +457,8 @@ class JsonParseStateTest {
     void testParseIntegerValue() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("2345");
         Object result = parserState.value();
-        assertThat(result)
-                .isInstanceOf(Integer.class)
-                .isEqualTo(2345);
+        assertThat(result).isInstanceOf(BigDecimal.class);
+        assertThat((BigDecimal) result).isEqualByComparingTo("2345");
         assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
@@ -477,9 +467,8 @@ class JsonParseStateTest {
     void testParseNegativeIntegerValue() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("-2345");
         Object result = parserState.value();
-        assertThat(result)
-                .isInstanceOf(Integer.class)
-                .isEqualTo(-2345);
+        assertThat(result).isInstanceOf(BigDecimal.class);
+        assertThat((BigDecimal) result).isEqualByComparingTo("-2345");
         assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 

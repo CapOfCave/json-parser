@@ -6,6 +6,7 @@ import me.kecker.jsonparser.exceptions.JsonParseException;
 import me.kecker.jsonparser.exceptions.UnexpectedCharacterException;
 
 import javax.lang.model.type.NullType;
+import java.math.BigDecimal;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -88,49 +89,28 @@ public class JsonParseState {
         throw new IllegalTokenException("Input '" + word + "' is not a valid boolean.");
     }
 
-    public Number number() throws IllegalNumberException {
-        int integer = integer();
-
-        double fraction = 0;
-        if (!reachedEnd() && current() == POINT) {
-            advance();
-            if (reachedEnd()) {
-                throw new IllegalNumberException("Numbers must not end in a trailing dot.");
-            }
-
-            double factor = 1.0;
-
-            // first digit is mandatory
-            do {
-                factor /= 10;
-                fraction += factor * NumberUtils.toDecimal(current());
-                advance();
-            } while (!reachedEnd() && NumberUtils.isDigit(current()));
-        }
-        if (fraction == 0) {
-            return integer;
-        }
-        return integer + fraction;
-    }
-
-    private int integer() throws IllegalNumberException {
-        boolean negative = false;
-        if (current() == MINUS) {
-            negative = true;
+    public BigDecimal number() throws IllegalNumberException {
+        StringBuilder numberStringBuilder = new StringBuilder();
+        while (!reachedEnd() && (Character.isDigit(current()) || current() == '-' || current() == '.')) {
+            numberStringBuilder.append(current());
             advance();
         }
-        boolean firstNumberZero = current() == ZERO;
 
-        int absoluteValue = 0;
-        while (!reachedEnd() && Character.isLetterOrDigit(current())) {
-            absoluteValue *= 10;
-            absoluteValue += NumberUtils.toDecimal(current());
-            advance();
+        String stringValue = numberStringBuilder.toString();
+        if ((stringValue.length() > 1 && stringValue.startsWith("0"))
+                || (stringValue.length() > 2 && stringValue.startsWith("-0"))
+        ) {
+            throw new IllegalNumberException("Number must not start with a leading zero, but was \"" + stringValue + "\"");
         }
-        if (absoluteValue > 9 && firstNumberZero) {
-            throw new IllegalNumberException("Number must not start with 0.");
+        if (stringValue.endsWith(".")) {
+            throw new IllegalNumberException("Number must not end with a trailing point, but was \"" + stringValue + "\"");
         }
-        return negative ? -absoluteValue : absoluteValue;
+
+        try {
+            return new BigDecimal(stringValue);
+        } catch (NumberFormatException e) {
+            throw new IllegalNumberException(e);
+        }
     }
 
     public String string() throws UnexpectedCharacterException {
