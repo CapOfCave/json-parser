@@ -1,5 +1,6 @@
 package me.kecker.jsonparser;
 
+import me.kecker.jsonparser.exceptions.IllegalNumberException;
 import me.kecker.jsonparser.exceptions.IllegalTokenException;
 import me.kecker.jsonparser.exceptions.JsonParseException;
 import me.kecker.jsonparser.exceptions.UnexpectedCharacterException;
@@ -140,7 +141,7 @@ class JsonParseStateTest {
     @DisplayName("number() should throw exception when first of many digits is 0")
     void testNumberIntegerStartingWith0() {
         JsonParseState parserState = new JsonParseState("012");
-        assertThrows(NumberFormatException.class, parserState::number);
+        assertThrows(IllegalNumberException.class, parserState::number);
     }
     @Test
     @DisplayName("number() should return Integer for integer input")
@@ -168,7 +169,7 @@ class JsonParseStateTest {
     @DisplayName("number() should throw exception when first of many digits is 0, even if it is negative")
     void testNumberNegativeIntegerStartingWith0() {
         JsonParseState parserState = new JsonParseState("-012");
-        assertThrows(NumberFormatException.class, parserState::number);
+        assertThrows(IllegalNumberException.class, parserState::number);
     }
     @Test
     @DisplayName("bool() should throw exception for any non-boolean input")

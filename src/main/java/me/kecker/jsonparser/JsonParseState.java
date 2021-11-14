@@ -24,6 +24,7 @@ public class JsonParseState {
     private static final char COLON = ':';
     private static final char BACKSLASH = '\\';
     private static final char MINUS = '-';
+    public static final char ZERO = '0';
 
     private final String source;
     private char current;
@@ -87,22 +88,27 @@ public class JsonParseState {
     }
 
     public Number number() throws IllegalNumberException {
-        StringBuilder wordBuilder = new StringBuilder();
+        return integer();
+    }
+
+    private int integer() throws IllegalNumberException {
         boolean negative = false;
         if (current() == MINUS) {
             negative = true;
             advance();
         }
+        boolean firstNumberZero = current() == ZERO;
+
+        int absoluteValue = 0;
         while (!reachedEnd() && Character.isDigit(current())) {
-            wordBuilder.append(current());
+            absoluteValue *= 10;
+            absoluteValue += NumberUtils.toDecimal(current());
             advance();
         }
-        String number = wordBuilder.toString();
-        if (number.length() > 1 && number.startsWith("0")) {
-            throw new IllegalNumberException("Number must not start with 0, but was '" + number + "'.");
+        if (absoluteValue > 9 && firstNumberZero) {
+            throw new IllegalNumberException("Number must not start with 0.");
         }
-        int result = Integer.parseInt(number);
-        return negative ? -result : result;
+        return negative ? -absoluteValue : absoluteValue;
     }
 
     public String string() throws UnexpectedCharacterException {
