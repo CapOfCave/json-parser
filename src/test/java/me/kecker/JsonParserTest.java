@@ -10,13 +10,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 class JsonParserTest {
 
     @Test
-    @DisplayName("parseObject should parse empty object")
-    void testParseEmptyObject() {
-        Map<String, Object> result = JsonParser.parseObject("{}");
-        assertThat(result).isEmpty();
-    }
-
-    @Test
     @DisplayName("parse should return Boolean value for input 'true'")
     void testParseForInputTrue() {
         Object result = JsonParser.parse("true");

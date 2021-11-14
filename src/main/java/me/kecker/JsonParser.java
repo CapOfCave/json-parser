@@ -5,6 +5,7 @@ import java.util.Map;
 
 public class JsonParser {
 
+    @Deprecated
     public static Object parse(String source) {
         if (source.startsWith("\"")) {
             return parseString(source);

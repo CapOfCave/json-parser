@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.util.Map;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -106,6 +108,15 @@ class JsonParseStateTest {
     void testParseStringWithoutLeadingQuote() {
         JsonParseState parserState = new JsonParseState("input\"");
         assertThrows(IllegalArgumentException.class, parserState::string);
+    }
+
+    @Test
+    @DisplayName("object should return empty Map for empty object")
+    void testParseEmptyObject() {
+        JsonParseState parserState = new JsonParseState("{}");
+        Map<String, Object> result = parserState.object();
+        assertThat(result).isEmpty();
+        assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
 }
