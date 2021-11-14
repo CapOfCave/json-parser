@@ -1,5 +1,8 @@
 package me.kecker;
 
+import java.util.Collections;
+import java.util.Map;
+
 public class JsonParser {
 
     public static Object parse(String source) {
@@ -20,4 +23,7 @@ public class JsonParser {
         return source.substring(1, source.length() - 1);
     }
 
+    public static Map<String, Object> parseObject(String source) {
+        return Collections.emptyMap();
+    }
 }
