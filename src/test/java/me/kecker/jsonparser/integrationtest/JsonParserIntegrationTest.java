@@ -30,7 +30,6 @@ class JsonParserIntegrationTest {
         assertThrows(JsonParseException.class, () -> JsonParser.parse(input));
     }
 
-    @Disabled
     @ParameterizedTest
     @MethodSource("indifferentFileNamesProvider")
     void testIndifferentExampleFiles(String fileName) {
