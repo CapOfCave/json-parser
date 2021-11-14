@@ -15,4 +15,7 @@ public class NumberUtils {
         return character >= '0' && character <= '9';
     }
 
+    private NumberUtils() {
+        // class should not be instantiated
+    }
 }
