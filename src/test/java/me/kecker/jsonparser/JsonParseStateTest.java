@@ -143,8 +143,9 @@ class JsonParseStateTest {
         JsonParseState parserState = new JsonParseState("012");
         assertThrows(IllegalNumberException.class, parserState::number);
     }
+
     @Test
-    @DisplayName("number() should return Integer for integer input")
+    @DisplayName("number() should return Integer for negative integer input")
     void testNumberNegativeInteger() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("-1234");
         Number result = parserState.number();
@@ -171,6 +172,25 @@ class JsonParseStateTest {
         JsonParseState parserState = new JsonParseState("-012");
         assertThrows(IllegalNumberException.class, parserState::number);
     }
+
+    @Test
+    @DisplayName("number() should return Double for floating point input")
+    void testNumberFloat() throws JsonParseException {
+        JsonParseState parserState = new JsonParseState("12.34");
+        Number result = parserState.number();
+        assertThat(result)
+                .isInstanceOf(Double.class)
+                .isEqualTo(12.34);
+        assertThat(parserState.reachedEnd()).isEqualTo(true);
+    }
+
+    @Test
+    @DisplayName("number() should throw exception for trailing .")
+    void testNumberTrailingPoint() throws JsonParseException {
+        JsonParseState parserState = new JsonParseState("12.");
+        assertThrows(IllegalNumberException.class, parserState::number);
+    }
+
     @Test
     @DisplayName("bool() should throw exception for any non-boolean input")
     void testBooleanOtherInput() {

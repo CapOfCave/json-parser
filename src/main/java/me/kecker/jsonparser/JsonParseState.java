@@ -25,6 +25,7 @@ public class JsonParseState {
     private static final char BACKSLASH = '\\';
     private static final char MINUS = '-';
     public static final char ZERO = '0';
+    public static final char POINT = '.';
 
     private final String source;
     private char current;
@@ -88,7 +89,28 @@ public class JsonParseState {
     }
 
     public Number number() throws IllegalNumberException {
-        return integer();
+        int integer = integer();
+
+        double fraction = 0;
+        if (!reachedEnd() && current() == POINT) {
+            advance();
+            if (reachedEnd()) {
+                throw new IllegalNumberException("Numbers must not end in a trailing dot.");
+            }
+
+            double factor = 1.0;
+
+            // first digit is mandatory
+            do {
+                factor /= 10;
+                fraction += factor * NumberUtils.toDecimal(current());
+                advance();
+            } while (!reachedEnd() && NumberUtils.isDigit(current()));
+        }
+        if (fraction == 0) {
+            return integer;
+        }
+        return integer + fraction;
     }
 
     private int integer() throws IllegalNumberException {
