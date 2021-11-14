@@ -24,18 +24,4 @@ class NumberUtilsTest {
     void testToDecimalInvalidValues(char input) {
         assertThrows(IllegalNumberException.class, () -> NumberUtils.toDecimal(input));
     }
-
-    @Test
-    @DisplayName("toOneNine() should return the decimal value")
-    void testToOneNine() throws IllegalNumberException {
-        int value = NumberUtils.toOneNine('1');
-        assertThat(value).isEqualTo(1);
-    }
-
-    @ParameterizedTest
-    @DisplayName("toOneNine() should throw exception for non-numeric characters")
-    @ValueSource(chars = {'%', '0', 'A'})
-    void testToOneNineInvalidValues(char input) {
-        assertThrows(IllegalNumberException.class, () -> NumberUtils.toOneNine(input));
-    }
 }
