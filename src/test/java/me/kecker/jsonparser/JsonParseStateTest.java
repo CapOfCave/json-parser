@@ -167,8 +167,18 @@ class JsonParseStateTest {
     }
 
     @Test
+    @DisplayName("member() should allow null values")
+    void testMemberShouldAllowNullValues() throws JsonParseException {
+        JsonParseState parserState = new JsonParseState("\"key\":null");
+        Map.Entry<String, Object> member = parserState.member();
+        assertThat(member.getKey()).isEqualTo("key");
+        assertThat(member.getValue()).isNull();
+        assertThat(parserState.reachedEnd()).isEqualTo(true);
+    }
+
+    @Test
     @DisplayName("object() should return empty Map for empty object")
-    void testParseEmptyObject() throws UnexpectedCharacterException {
+    void testParseEmptyObject() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("{}");
         Map<String, Object> result = parserState.object();
         assertThat(result).isEmpty();
@@ -177,7 +187,7 @@ class JsonParseStateTest {
 
     @Test
     @DisplayName("object() should return empty Map for empty object with whitespace")
-    void testParseEmptyObjectWithWhitespace() throws UnexpectedCharacterException {
+    void testParseEmptyObjectWithWhitespace() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("{ \n}");
         Map<String, Object> result = parserState.object();
         assertThat(result).isEmpty();
@@ -196,6 +206,15 @@ class JsonParseStateTest {
     void testParseEmptyObjectWithoutEndingBraces() {
         JsonParseState parserState = new JsonParseState("{ ");
         assertThrows(UnexpectedCharacterException.class, parserState::object);
+    }
+
+    @Test
+    @DisplayName("object() should return correct result for object with one member")
+    void testParseObjectWithOneMember() throws JsonParseException {
+        JsonParseState parserState = new JsonParseState("{\"key\":1234}");
+        Map<String, Object> result = parserState.object();
+        assertThat(result.get("key")).isEqualTo(1234);
+        assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
     @Test

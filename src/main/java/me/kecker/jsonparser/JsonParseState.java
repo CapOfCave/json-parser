@@ -8,6 +8,7 @@ import javax.lang.model.type.NullType;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -106,11 +107,16 @@ public class JsonParseState {
 
     }
 
-    public Map<String, Object> object() throws UnexpectedCharacterException {
+    public Map<String, Object> object() throws JsonParseException {
         assertCharacterAndAdvance(CURLY_BRACE_OPEN);
         whitespace();
+        Map<String, Object> members = new HashMap<>();
+        if (!reachedEnd() && current() != CURLY_BRACE_CLOSE) {
+            Map.Entry<String, Object> member = member();
+            members.put(member.getKey(), member.getValue());
+        }
         assertCharacterAndAdvance(CURLY_BRACE_CLOSE);
-        return Collections.emptyMap();
+        return members;
     }
 
     public Map.Entry<String, Object> member() throws JsonParseException {
