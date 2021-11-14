@@ -143,7 +143,34 @@ class JsonParseStateTest {
         JsonParseState parserState = new JsonParseState("012");
         assertThrows(NumberFormatException.class, parserState::number);
     }
+    @Test
+    @DisplayName("number() should return Integer for integer input")
+    void testNumberNegativeInteger() throws JsonParseException {
+        JsonParseState parserState = new JsonParseState("-1234");
+        Number result = parserState.number();
+        assertThat(result)
+                .isInstanceOf(Integer.class)
+                .isEqualTo(-1234);
+        assertThat(parserState.reachedEnd()).isEqualTo(true);
+    }
 
+    @Test
+    @DisplayName("number() should return 0 for input -0")
+    void testNumberNegative0() throws JsonParseException {
+        JsonParseState parserState = new JsonParseState("-0");
+        Number result = parserState.number();
+        assertThat(result)
+                .isInstanceOf(Integer.class)
+                .isEqualTo(0);
+        assertThat(parserState.reachedEnd()).isEqualTo(true);
+    }
+
+    @Test
+    @DisplayName("number() should throw exception when first of many digits is 0, even if it is negative")
+    void testNumberNegativeIntegerStartingWith0() {
+        JsonParseState parserState = new JsonParseState("-012");
+        assertThrows(NumberFormatException.class, parserState::number);
+    }
     @Test
     @DisplayName("bool() should throw exception for any non-boolean input")
     void testBooleanOtherInput() {

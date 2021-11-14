@@ -23,6 +23,7 @@ public class JsonParseState {
     private static final char COMMA = ',';
     private static final char COLON = ':';
     private static final char BACKSLASH = '\\';
+    private static final char MINUS = '-';
 
     private final String source;
     private char current;
@@ -87,6 +88,11 @@ public class JsonParseState {
 
     public Number number() {
         StringBuilder wordBuilder = new StringBuilder();
+        boolean negative = false;
+        if (current() == MINUS) {
+                negative = true;
+                advance();
+        }
         while (!reachedEnd() && Character.isDigit(current())) {
             wordBuilder.append(current());
             advance();
@@ -95,7 +101,8 @@ public class JsonParseState {
         if (number.length() > 1 && number.startsWith("0")) {
             throw new NumberFormatException("Number must not start with 0, but was '" + number + "'.");
         }
-        return Integer.parseInt(number);
+        int result = Integer.parseInt(number);
+        return negative ? -result : result;
     }
 
     public String string() throws UnexpectedCharacterException {
