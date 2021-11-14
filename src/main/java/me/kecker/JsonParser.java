@@ -6,6 +6,9 @@ import java.util.Map;
 public class JsonParser {
 
     public static Object parse(String source) {
+        if (source.startsWith("\"")) {
+            return parseString(source);
+        }
         return parseBoolean(source);
     }
 

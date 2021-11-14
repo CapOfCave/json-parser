@@ -62,4 +62,14 @@ class JsonParserTest {
                 .isInstanceOf(Boolean.class)
                 .isEqualTo(Boolean.FALSE);
     }
+
+    @Test
+    @DisplayName("parse should return String value for quoted string")
+    void testParseForQuotedStringInput() {
+        Object result = JsonParser.parse("\"string\"");
+        assertThat(result)
+                .isInstanceOf(String.class)
+                .isEqualTo("string");
+    }
+
 }
