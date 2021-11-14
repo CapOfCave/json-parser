@@ -1,5 +1,8 @@
 package me.kecker.jsonparser;
 
+import me.kecker.jsonparser.exceptions.IllegalTokenException;
+import me.kecker.jsonparser.exceptions.UnexpectedCharacterException;
+
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
@@ -41,7 +44,7 @@ public class JsonParseState {
         }
     }
 
-    public boolean bool() {
+    public boolean bool() throws IllegalTokenException {
         StringBuilder wordBuilder = new StringBuilder();
         while (Character.isAlphabetic(current()) && !reachedEnd()) {
             wordBuilder.append(current());
@@ -54,37 +57,37 @@ public class JsonParseState {
         if (word.equals("false")) {
             return false;
         }
-        throw new IllegalArgumentException("Input '" + word + "' is not a valid boolean.");
+        throw new IllegalTokenException("Input '" + word + "' is not a valid boolean.");
     }
 
-    public String string() {
+    public String string() throws UnexpectedCharacterException {
         assertCharacterAndAdvance(QUOTE);
         StringBuilder wordBuilder = new StringBuilder();
-        while (current() != QUOTE && !reachedEnd() ) {
+        while (current() != QUOTE && !reachedEnd()) {
             wordBuilder.append(current());
             advance();
         }
         return wordBuilder.toString();
     }
 
-    public Map<String, Object> object() {
+    public Map<String, Object> object() throws UnexpectedCharacterException {
         assertCharacterAndAdvance(CURLY_BRACE_OPEN);
         whitespace();
         assertCharacterAndAdvance(CURLY_BRACE_CLOSE);
         return Collections.emptyMap();
     }
 
-    private void assertCharacterAndAdvance(char expected) {
+    private void assertCharacterAndAdvance(char expected) throws UnexpectedCharacterException {
         assertCharacter(expected);
         advance();
     }
 
-    private void assertCharacter(char expected) {
+    private void assertCharacter(char expected) throws UnexpectedCharacterException {
         if (reachedEnd()) {
-            throw new IllegalArgumentException("Unexpected EOI, expected '" + expected + "'.");
+            throw new UnexpectedCharacterException(expected);
         }
         if (current() != expected) {
-            throw new IllegalArgumentException("Unexpected character: '" + current() + "', expected '" + expected + "'.");
+            throw new UnexpectedCharacterException(current(), expected);
         }
     }
 }

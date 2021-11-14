@@ -1,5 +1,7 @@
 package me.kecker.jsonparser;
 
+import me.kecker.jsonparser.exceptions.IllegalTokenException;
+import me.kecker.jsonparser.exceptions.UnexpectedCharacterException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -74,7 +76,7 @@ class JsonParseStateTest {
 
     @Test
     @DisplayName("bool() should return true for input 'true'")
-    void testBooleanTrue() {
+    void testBooleanTrue() throws IllegalTokenException {
         JsonParseState parserState = new JsonParseState("true");
         boolean result = parserState.bool();
         assertThat(result).isEqualTo(true);
@@ -82,7 +84,7 @@ class JsonParseStateTest {
 
     @Test
     @DisplayName("bool() should return false for input 'false'")
-    void testBooleanFalse() {
+    void testBooleanFalse() throws IllegalTokenException {
         JsonParseState parserState = new JsonParseState("false");
         boolean result = parserState.bool();
         assertThat(result).isEqualTo(false);
@@ -92,12 +94,12 @@ class JsonParseStateTest {
     @DisplayName("bool() should throw exception for any non-boolean input")
     void testBooleanOtherInput() {
         JsonParseState parserState = new JsonParseState("other");
-        assertThrows(IllegalArgumentException.class, parserState::bool);
+        assertThrows(IllegalTokenException.class, parserState::bool);
     }
 
     @Test
     @DisplayName("string() should return the input string without quotes")
-    void testParseString() {
+    void testParseString() throws UnexpectedCharacterException {
         JsonParseState parserState = new JsonParseState("\"input\"");
         String result = parserState.string();
         assertThat(result).isEqualTo("input");
@@ -107,12 +109,12 @@ class JsonParseStateTest {
     @DisplayName("string() should throw exception if not starting with quotes")
     void testParseStringWithoutLeadingQuote() {
         JsonParseState parserState = new JsonParseState("input\"");
-        assertThrows(IllegalArgumentException.class, parserState::string);
+        assertThrows(UnexpectedCharacterException.class, parserState::string);
     }
 
     @Test
     @DisplayName("object() should return empty Map for empty object")
-    void testParseEmptyObject() {
+    void testParseEmptyObject() throws UnexpectedCharacterException {
         JsonParseState parserState = new JsonParseState("{}");
         Map<String, Object> result = parserState.object();
         assertThat(result).isEmpty();
@@ -121,7 +123,7 @@ class JsonParseStateTest {
 
     @Test
     @DisplayName("object() should return empty Map for empty object with whitespace")
-    void testParseEmptyObjectWithWhitespace() {
+    void testParseEmptyObjectWithWhitespace() throws UnexpectedCharacterException {
         JsonParseState parserState = new JsonParseState("{ \n}");
         Map<String, Object> result = parserState.object();
         assertThat(result).isEmpty();
@@ -132,14 +134,14 @@ class JsonParseStateTest {
     @DisplayName("object() should throw exception if not starting with opening curly braces")
     void testParseEmptyObjectWithoutStartingBraces() {
         JsonParseState parserState = new JsonParseState(" }");
-        assertThrows(IllegalArgumentException.class, parserState::object);
+        assertThrows(UnexpectedCharacterException.class, parserState::object);
     }
 
     @Test
     @DisplayName("object() should throw exception if not ending with closing curly braces")
     void testParseEmptyObjectWithoutEndingBraces() {
         JsonParseState parserState = new JsonParseState("{ ");
-        assertThrows(IllegalArgumentException.class, parserState::object);
+        assertThrows(UnexpectedCharacterException.class, parserState::object);
     }
 
 }
