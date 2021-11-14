@@ -1,5 +1,6 @@
 package me.kecker.jsonparser;
 
+import me.kecker.jsonparser.exceptions.IllegalNumberException;
 import me.kecker.jsonparser.exceptions.IllegalTokenException;
 import me.kecker.jsonparser.exceptions.JsonParseException;
 import me.kecker.jsonparser.exceptions.UnexpectedCharacterException;
@@ -7,7 +8,6 @@ import me.kecker.jsonparser.exceptions.UnexpectedCharacterException;
 import javax.lang.model.type.NullType;
 import java.util.AbstractMap;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -86,12 +86,12 @@ public class JsonParseState {
         throw new IllegalTokenException("Input '" + word + "' is not a valid boolean.");
     }
 
-    public Number number() {
+    public Number number() throws IllegalNumberException {
         StringBuilder wordBuilder = new StringBuilder();
         boolean negative = false;
         if (current() == MINUS) {
-                negative = true;
-                advance();
+            negative = true;
+            advance();
         }
         while (!reachedEnd() && Character.isDigit(current())) {
             wordBuilder.append(current());
@@ -99,7 +99,7 @@ public class JsonParseState {
         }
         String number = wordBuilder.toString();
         if (number.length() > 1 && number.startsWith("0")) {
-            throw new NumberFormatException("Number must not start with 0, but was '" + number + "'.");
+            throw new IllegalNumberException("Number must not start with 0, but was '" + number + "'.");
         }
         int result = Integer.parseInt(number);
         return negative ? -result : result;
