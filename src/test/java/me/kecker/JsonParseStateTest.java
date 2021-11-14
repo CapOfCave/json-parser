@@ -101,4 +101,11 @@ class JsonParseStateTest {
         assertThat(result).isEqualTo("input");
     }
 
+    @Test
+    @DisplayName("string() should throw exception if not starting with quotes")
+    void testParseStringWithoutLeadingQuote() {
+        JsonParseState parserState = new JsonParseState("input\"");
+        assertThrows(IllegalArgumentException.class, parserState::string);
+    }
+
 }

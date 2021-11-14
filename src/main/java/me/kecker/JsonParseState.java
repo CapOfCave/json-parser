@@ -4,6 +4,7 @@ import java.util.Set;
 
 public class JsonParseState {
     private static final Set<Character> WHITESPACE = Set.of('\u0020', '\n', '\r', '\u0009');
+    private static final char QUOTE = '"';
 
     private String source;
     private char current;
@@ -53,9 +54,12 @@ public class JsonParseState {
     }
 
     public String string() {
+        if (current() != QUOTE) {
+            throw new IllegalArgumentException("String must start with quotes, but the current character is '" + current() + "'.");
+        }
         advance();
         StringBuilder wordBuilder = new StringBuilder();
-        while (current() != '"' && !reachedEnd() ) {
+        while (current() != QUOTE && !reachedEnd() ) {
             wordBuilder.append(current());
             advance();
         }
