@@ -7,6 +7,8 @@ import java.util.Set;
 public class JsonParseState {
     private static final Set<Character> WHITESPACE = Set.of('\u0020', '\n', '\r', '\u0009');
     private static final char QUOTE = '"';
+    private static final char CURLY_BRACE_OPEN = '{';
+    private static final char CURLY_BRACE_CLOSE = '}';
 
     private String source;
     private char current;
@@ -56,10 +58,7 @@ public class JsonParseState {
     }
 
     public String string() {
-        if (current() != QUOTE) {
-            throw new IllegalArgumentException("String must start with quotes, but the current character is '" + current() + "'.");
-        }
-        advance();
+        assertCharacterAndAdvance(QUOTE);
         StringBuilder wordBuilder = new StringBuilder();
         while (current() != QUOTE && !reachedEnd() ) {
             wordBuilder.append(current());
@@ -69,9 +68,23 @@ public class JsonParseState {
     }
 
     public Map<String, Object> object() {
-        advance();
+        assertCharacterAndAdvance(CURLY_BRACE_OPEN);
         whitespace();
-        advance();
+        assertCharacterAndAdvance(CURLY_BRACE_CLOSE);
         return Collections.emptyMap();
+    }
+
+    private void assertCharacterAndAdvance(char expected) {
+        assertCharacter(expected);
+        advance();
+    }
+
+    private void assertCharacter(char expected) {
+        if (reachedEnd()) {
+            throw new IllegalArgumentException("Unexpected EOI, expected '" + expected + "'.");
+        }
+        if (current() != expected) {
+            throw new IllegalArgumentException("Unexpected character: '" + current() + "', expected '" + expected + "'.");
+        }
     }
 }

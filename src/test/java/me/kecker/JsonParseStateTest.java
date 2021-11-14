@@ -111,7 +111,7 @@ class JsonParseStateTest {
     }
 
     @Test
-    @DisplayName("object should return empty Map for empty object")
+    @DisplayName("object() should return empty Map for empty object")
     void testParseEmptyObject() {
         JsonParseState parserState = new JsonParseState("{}");
         Map<String, Object> result = parserState.object();
@@ -120,12 +120,26 @@ class JsonParseStateTest {
     }
 
     @Test
-    @DisplayName("object should return empty Map for empty object with whitespace")
+    @DisplayName("object() should return empty Map for empty object with whitespace")
     void testParseEmptyObjectWithWhitespace() {
         JsonParseState parserState = new JsonParseState("{ \n}");
         Map<String, Object> result = parserState.object();
         assertThat(result).isEmpty();
         assertThat(parserState.reachedEnd()).isEqualTo(true);
+    }
+
+    @Test
+    @DisplayName("object() should throw exception if not starting with opening curly braces")
+    void testParseEmptyObjectWithoutStartingBraces() {
+        JsonParseState parserState = new JsonParseState(" }");
+        assertThrows(IllegalArgumentException.class, parserState::object);
+    }
+
+    @Test
+    @DisplayName("object() should throw exception if not ending with closing curly braces")
+    void testParseEmptyObjectWithoutEndingBraces() {
+        JsonParseState parserState = new JsonParseState("{ ");
+        assertThrows(IllegalArgumentException.class, parserState::object);
     }
 
 }
