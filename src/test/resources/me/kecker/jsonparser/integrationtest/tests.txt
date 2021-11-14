@@ -221,7 +221,6 @@ n_structure_unicode-identifier.json
 n_structure_UTF8_BOM_no_data.json
 n_structure_whitespace_formfeed.json
 n_structure_whitespace_U+2060_word_joiner.json
-tests.txt
 y_array_arraysWithSpaces.json
 y_array_empty-string.json
 y_array_empty.json
