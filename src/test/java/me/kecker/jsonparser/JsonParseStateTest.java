@@ -644,8 +644,15 @@ class JsonParseStateTest {
 
     @Test
     @DisplayName("number() should throw exception when starting with a +")
-    void testArrayNumberWithPlus() {
+    void testNumberWithPlus() {
         JsonParseState jsonParseState = new JsonParseState("+5");
         assertThrows(JsonParseException.class, jsonParseState::number);
+    }
+
+    @Test
+    @DisplayName("string() should throw exception upon unfinished \\u")
+    void testStringUnfinishedUnicode() throws JsonParseException {
+        JsonParseState jsonParseState = new JsonParseState("\"\\u");
+        assertThrows(JsonParseException.class, jsonParseState::string);
     }
 }

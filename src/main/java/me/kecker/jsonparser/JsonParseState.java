@@ -183,7 +183,10 @@ public class JsonParseState {
         return escape;
     }
 
-    private int hex() {
+    private int hex() throws JsonParseException {
+        if (reachedEnd()) {
+            throw new JsonParseException("Unexpected EOI.");
+        }
         int i = Character.getNumericValue(current());
         if (i > 16) {
             throw new IllegalArgumentException("'" + current() + "' is not a hex character.");
