@@ -16,7 +16,6 @@ class JsonParserIntegrationTest {
     @MethodSource("fileNamesToAcceptProvider")
     void testExampleFileToAccept(String fileName) {
         String input = ResourceLoader.loadFile(fileName);
-        System.out.println(fileName);
         assertDoesNotThrow(() -> JsonParser.parse(input));
     }
 
@@ -24,7 +23,6 @@ class JsonParserIntegrationTest {
     @MethodSource("fileNamesToRejectProvider")
     void testExampleFilesToReject(String fileName) {
         String input = ResourceLoader.loadFile(fileName);
-        System.out.println(fileName);
         assertThrows(JsonParseException.class, () -> JsonParser.parse(input));
     }
 
@@ -32,7 +30,6 @@ class JsonParserIntegrationTest {
     @MethodSource("indifferentFileNamesProvider")
     void testIndifferentExampleFiles(String fileName) {
         String input = ResourceLoader.loadFile(fileName);
-        System.out.println(fileName);
         try {
             JsonParser.parse(input);
         } catch (JsonParseException e) {
