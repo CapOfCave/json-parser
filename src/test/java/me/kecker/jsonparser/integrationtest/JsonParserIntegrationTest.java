@@ -21,7 +21,6 @@ class JsonParserIntegrationTest {
         assertDoesNotThrow(() -> JsonParser.parse(input));
     }
 
-    @Disabled
     @ParameterizedTest
     @MethodSource("fileNamesToRejectProvider")
     void testExampleFilesToReject(String fileName) {

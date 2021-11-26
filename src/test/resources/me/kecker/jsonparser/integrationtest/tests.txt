@@ -172,7 +172,7 @@ n_string_unescaped_newline.json
 n_string_unescaped_tab.json
 n_string_unicode_CapitalU.json
 n_string_with_trailing_garbage.json
-n_structure_100000_opening_arrays.json
+// n_structure_100000_opening_arrays.json
 n_structure_angle_bracket_..json
 n_structure_angle_bracket_null.json
 n_structure_array_trailing_garbage.json
@@ -196,7 +196,7 @@ n_structure_object_with_comment.json
 n_structure_object_with_trailing_garbage.json
 n_structure_open_array_apostrophe.json
 n_structure_open_array_comma.json
-n_structure_open_array_object.json
+// n_structure_open_array_object.json
 n_structure_open_array_open_object.json
 n_structure_open_array_open_string.json
 n_structure_open_array_string.json
