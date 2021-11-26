@@ -682,6 +682,13 @@ class JsonParseStateTest {
         assertDoesNotThrow(jsonParseState::string);
     }
 
+    @Test
+    @DisplayName("current() should throw Error when invoked on an empty String")
+    void testCurrentEmptyString() {
+        JsonParseState jsonParseState = new JsonParseState("");
+        assertThrows(AssertionError.class, jsonParseState::current);
+    }
+
     private static Stream<Arguments> provideInputForTestParseStringWithEscapedControlCharacters() {
         return Stream.of(
                 Arguments.of("\\/", "/"),
