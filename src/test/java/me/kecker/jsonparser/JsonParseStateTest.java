@@ -647,6 +647,13 @@ class JsonParseStateTest {
     }
 
     @Test
+    @DisplayName("number() should throw exception when encountering non-latin digit")
+    void testNumberNonLatinDigit() {
+        JsonParseState jsonParseState = new JsonParseState("\uff11");
+        assertThrows(JsonParseException.class, jsonParseState::number);
+    }
+
+    @Test
     @DisplayName("string() should throw exception upon unfinished \\u")
     void testStringUnfinishedUnicode() {
         JsonParseState jsonParseState = new JsonParseState("\"\\u");

@@ -126,7 +126,7 @@ public class JsonParseState {
     }
 
     private static boolean mightOccurInNumber(char character) {
-        return Character.isDigit(character)
+        return (character >= '0' && character <= '9')
                 || character == '-'
                 || character == '+'
                 || character == '.'
