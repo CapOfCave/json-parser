@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class JsonParseStateTest {
@@ -303,17 +304,6 @@ class JsonParseStateTest {
         String result = parserState.string();
         assertThat(result).isEqualTo(expected);
         assertThat(parserState.reachedEnd()).isEqualTo(true);
-    }
-
-    private static Stream<Arguments> provideInputForTestParseStringWithEscapedControlCharacters() {
-        return Stream.of(
-                Arguments.of("\\/", "/"),
-                Arguments.of("\\b", "\b"),
-                Arguments.of("\\f", "\f"),
-                Arguments.of("\\n", "\n"),
-                Arguments.of("\\r", "\r"),
-                Arguments.of("\\t", "\t")
-        );
     }
 
     @Test
@@ -662,4 +652,35 @@ class JsonParseStateTest {
         JsonParseState jsonParseState = new JsonParseState("\"\\utttt\"");
         assertThrows(UnexpectedCharacterException.class, jsonParseState::string);
     }
+
+    @ParameterizedTest
+    @DisplayName("string() should throw exception upon illegal characters")
+    @MethodSource("provideInputForTestStringIllegalCharacter")
+    void testStringIllegalCharacter(String charToTest) {
+        JsonParseState jsonParseState = new JsonParseState("\"" + charToTest + "\"");
+        assertThrows(UnexpectedCharacterException.class, jsonParseState::string);
+    }
+
+    @Test
+    @DisplayName("string() should throw no exception legal characters")
+    void testStringLegalCharacter() {
+        JsonParseState jsonParseState = new JsonParseState("\"\u0020\"");
+        assertDoesNotThrow(jsonParseState::string);
+    }
+
+    private static Stream<Arguments> provideInputForTestParseStringWithEscapedControlCharacters() {
+        return Stream.of(
+                Arguments.of("\\/", "/"),
+                Arguments.of("\\b", "\b"),
+                Arguments.of("\\f", "\f"),
+                Arguments.of("\\n", "\n"),
+                Arguments.of("\\r", "\r"),
+                Arguments.of("\\t", "\t")
+        );
+    }
+
+    private static Stream<String> provideInputForTestStringIllegalCharacter() {
+        return Stream.of("\u0000", "\n", "\t", "a\u0019");
+    }
+
 }

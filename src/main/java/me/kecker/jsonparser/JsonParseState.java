@@ -145,6 +145,9 @@ public class JsonParseState {
                 wordBuilder.append(escape());
                 continue;
             }
+            if (current() < 0x20) {
+                throw new UnexpectedCharacterException("non-control character", current());
+            }
             wordBuilder.append(current());
             advance();
         }
@@ -189,7 +192,7 @@ public class JsonParseState {
         }
         int i = Character.getNumericValue(current());
         if (i > 16) {
-            throw new UnexpectedCharacterException("[0-9a-f]", current());
+            throw new UnexpectedCharacterException("matching regex [0-9a-f]", current());
         }
         advance();
         return i;

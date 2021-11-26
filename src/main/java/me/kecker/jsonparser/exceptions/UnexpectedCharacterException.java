@@ -10,7 +10,7 @@ public class UnexpectedCharacterException extends JsonParseException {
         super("Unexpected character: '" + actual + "', expected '" + expected + "'.");
     }
 
-    public UnexpectedCharacterException(String regex, char actual) {
-        super("Unexpected character: '" + actual + "', expected matching RegEx'" + regex + "'.");
+    public UnexpectedCharacterException(String expected, char actual) {
+        super("Unexpected character: '" + actual + "', expected " + expected + ".");
     }
 }
