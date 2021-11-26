@@ -220,7 +220,7 @@ class JsonParseStateTest {
 
     @Test
     @DisplayName("number() should allow exponents with lowercase e")
-    void testNumberExponentWithLowercaseE() throws IllegalNumberException {
+    void testNumberExponentWithLowercaseE() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("1e2");
         BigDecimal result = parserState.number();
         assertThat(result).isEqualByComparingTo("100");
@@ -229,7 +229,7 @@ class JsonParseStateTest {
 
     @Test
     @DisplayName("number() should allow exponents with capital E")
-    void testNumberExponentWithCapitalE() throws IllegalNumberException {
+    void testNumberExponentWithCapitalE() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("1E2");
         BigDecimal result = parserState.number();
         assertThat(result).isEqualByComparingTo("100");
@@ -238,7 +238,7 @@ class JsonParseStateTest {
 
     @Test
     @DisplayName("number() should not throw exception when having the form 0eXXX")
-    void testNumberZeroWithExponent() throws IllegalNumberException {
+    void testNumberZeroWithExponent() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("0e5");
         BigDecimal result = parserState.number();
         assertThat(result).isEqualByComparingTo("0");
@@ -247,7 +247,7 @@ class JsonParseStateTest {
 
     @Test
     @DisplayName("number() input betweeen 0 and 1 should not throw exception ")
-    void testNumberBetween0And1() throws IllegalNumberException {
+    void testNumberBetween0And1() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("0.1");
         BigDecimal result = parserState.number();
         assertThat(result).isEqualByComparingTo("0.1");
@@ -640,5 +640,12 @@ class JsonParseStateTest {
     void testObjectMissingCloseAfterComma() {
         JsonParseState jsonParseState = new JsonParseState("{\"a\",");
         assertThrows(JsonParseException.class, jsonParseState::object);
+    }
+
+    @Test
+    @DisplayName("number() should throw exception when starting with a +")
+    void testArrayNumberWithPlus() {
+        JsonParseState jsonParseState = new JsonParseState("+5");
+        assertThrows(JsonParseException.class, jsonParseState::number);
     }
 }

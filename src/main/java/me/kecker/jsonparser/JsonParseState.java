@@ -89,7 +89,10 @@ public class JsonParseState {
         throw new IllegalTokenException("Input '" + word + "' is not a valid boolean.");
     }
 
-    public BigDecimal number() throws IllegalNumberException {
+    public BigDecimal number() throws JsonParseException {
+        if (current() == '+') {
+            throw new JsonParseException("Number must not start with a plus");
+        }
         StringBuilder numberStringBuilder = new StringBuilder();
         while (!reachedEnd() && mightOccurInNumber(current())) {
             numberStringBuilder.append(current());
