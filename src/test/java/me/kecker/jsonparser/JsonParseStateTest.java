@@ -651,8 +651,15 @@ class JsonParseStateTest {
 
     @Test
     @DisplayName("string() should throw exception upon unfinished \\u")
-    void testStringUnfinishedUnicode() throws JsonParseException {
+    void testStringUnfinishedUnicode() {
         JsonParseState jsonParseState = new JsonParseState("\"\\u");
         assertThrows(JsonParseException.class, jsonParseState::string);
+    }
+
+    @Test
+    @DisplayName("string() should throw exception upon non-hex \\u")
+    void testStringNonHexUnicode() {
+        JsonParseState jsonParseState = new JsonParseState("\"\\utttt\"");
+        assertThrows(UnexpectedCharacterException.class, jsonParseState::string);
     }
 }

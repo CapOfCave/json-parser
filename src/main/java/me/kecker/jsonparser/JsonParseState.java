@@ -189,7 +189,7 @@ public class JsonParseState {
         }
         int i = Character.getNumericValue(current());
         if (i > 16) {
-            throw new IllegalArgumentException("'" + current() + "' is not a hex character.");
+            throw new UnexpectedCharacterException("[0-9a-f]", current());
         }
         advance();
         return i;
