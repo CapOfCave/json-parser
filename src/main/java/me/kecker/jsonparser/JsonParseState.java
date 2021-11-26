@@ -47,7 +47,6 @@ public class JsonParseState {
     public void advance() {
         this.currentIndex++;
         this.current = reachedEnd() ? 0 : this.source.charAt(this.currentIndex);
-
     }
 
     public boolean reachedEnd() {
@@ -55,7 +54,7 @@ public class JsonParseState {
     }
 
     public void whitespace() {
-        while (WHITESPACE.contains(this.current) && !this.reachedEnd()) {
+        while (!this.reachedEnd() && WHITESPACE.contains(this.current())) {
             this.advance();
         }
     }
