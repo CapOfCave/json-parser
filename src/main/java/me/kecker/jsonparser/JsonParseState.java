@@ -36,7 +36,7 @@ public class JsonParseState {
     public JsonParseState(String source) {
         this.source = source;
         this.currentIndex = 0;
-        this.current = source.charAt(0);
+        this.current = reachedEnd() ? 0 : this.source.charAt(0);
     }
 
     public char current() {

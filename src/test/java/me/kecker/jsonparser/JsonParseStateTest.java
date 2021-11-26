@@ -619,6 +619,13 @@ class JsonParseStateTest {
     }
 
     @Test
+    @DisplayName("json() should throw exception if the input string is empty")
+    void testJsonEmptyInput() {
+        JsonParseState parserState = new JsonParseState("");
+        assertThrows(JsonParseException.class, parserState::json);
+    }
+
+    @Test
     @DisplayName("array() should throw exception when missing closing bracket after comma")
     void testArrayMissingCloseAfterComma() {
         JsonParseState jsonParseState = new JsonParseState("[\"a\",");
