@@ -24,9 +24,9 @@ public class JsonParseState {
     private static final char COMMA = ',';
     private static final char COLON = ':';
     private static final char BACKSLASH = '\\';
-    private static final char MINUS = '-';
-    public static final char ZERO = '0';
-    public static final char POINT = '.';
+    public static final char PLUS = '+';
+
+    public static final String POINT = ".";
 
     private final String source;
     private char current;
@@ -89,7 +89,7 @@ public class JsonParseState {
     }
 
     public BigDecimal number() throws JsonParseException {
-        if (current() == '+') {
+        if (current() == PLUS) {
             throw new JsonParseException("Number must not start with a plus");
         }
         StringBuilder numberStringBuilder = new StringBuilder();
@@ -110,10 +110,10 @@ public class JsonParseState {
         if ((absoluteValue.matches("0\\d+.*"))) {
             throw new IllegalNumberException("Number must not start with a leading zero, but was \"" + stringValue + "\"");
         }
-        if (absoluteValue.startsWith(".")) {
+        if (absoluteValue.startsWith(POINT)) {
             throw new IllegalNumberException("Number must not start with a leading point, but was \"" + stringValue + "\"");
         }
-        if (stringValue.endsWith(".") || stringValueWithoutExponent.endsWith(".")) {
+        if (stringValue.endsWith(POINT) || stringValueWithoutExponent.endsWith(POINT)) {
             throw new IllegalNumberException("Number must not end with a trailing point, but was \"" + stringValue + "\"");
         }
 
