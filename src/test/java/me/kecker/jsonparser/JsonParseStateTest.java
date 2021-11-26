@@ -627,4 +627,18 @@ class JsonParseStateTest {
         JsonParseState parserState = new JsonParseState("  \"test\" \" ");
         assertThrows(JsonParseException.class, parserState::json);
     }
+
+    @Test
+    @DisplayName("array() should throw exception when missing closing bracket after comma")
+    void testArrayMissingCloseAfterComma() {
+        JsonParseState jsonParseState = new JsonParseState("[\"a\",");
+        assertThrows(JsonParseException.class, jsonParseState::array);
+    }
+
+    @Test
+    @DisplayName("object() should throw exception when missing closing bracket after comma")
+    void testObjectMissingCloseAfterComma() {
+        JsonParseState jsonParseState = new JsonParseState("{\"a\",");
+        assertThrows(JsonParseException.class, jsonParseState::object);
+    }
 }

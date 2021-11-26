@@ -245,6 +245,9 @@ public class JsonParseState {
     }
 
     public Object value() throws JsonParseException {
+        if (reachedEnd()) {
+            throw new JsonParseException("Unexpected EOI");
+        }
         return switch (current()) {
             case 't', 'f' -> bool();
             case 'n' -> nullType();
