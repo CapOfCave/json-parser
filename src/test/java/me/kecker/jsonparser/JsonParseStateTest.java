@@ -12,8 +12,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import javax.lang.model.type.NullType;
-import java.math.BigDecimal;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -87,8 +85,8 @@ class JsonParseStateTest {
     @DisplayName("nullType() should pass for input 'null'")
     void testNullType() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("null");
-        NullType result = parserState.nullType();
-        assertThat(result).isNull();
+        JsonElement.JsonNull result = parserState.nullType();
+        assertThat(result).isEqualTo(JsonElement.NULL);
         assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
@@ -103,8 +101,8 @@ class JsonParseStateTest {
     @DisplayName("bool() should return true for input 'true'")
     void testBooleanTrue() throws IllegalTokenException {
         JsonParseState parserState = new JsonParseState("true");
-        boolean result = parserState.bool();
-        assertThat(result).isEqualTo(true);
+        JsonElement.JsonBoolean result = parserState.bool();
+        assertThat(result).isEqualTo(JsonElement.JsonBoolean.TRUE);
         assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
@@ -112,8 +110,8 @@ class JsonParseStateTest {
     @DisplayName("bool() should return false for input 'false'")
     void testBooleanFalse() throws IllegalTokenException {
         JsonParseState parserState = new JsonParseState("false");
-        boolean result = parserState.bool();
-        assertThat(result).isEqualTo(false);
+        JsonElement.JsonBoolean result = parserState.bool();
+        assertThat(result).isEqualTo(JsonElement.JsonBoolean.FALSE);
         assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
@@ -129,8 +127,8 @@ class JsonParseStateTest {
     @DisplayName("number() should return Integer for integer input")
     void testNumberInteger() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("1234");
-        BigDecimal result = parserState.number();
-        assertThat(result).isEqualByComparingTo("1234");
+        JsonElement.JsonNumber result = parserState.number();
+        assertThat(result.value()).isEqualByComparingTo("1234");
         assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
@@ -138,8 +136,8 @@ class JsonParseStateTest {
     @DisplayName("number() should return 0 for input 0")
     void testNumber0() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("0");
-        BigDecimal result = parserState.number();
-        assertThat(result).isEqualByComparingTo("0");
+        JsonElement.JsonNumber result = parserState.number();
+        assertThat(result.value()).isEqualByComparingTo("0");
         assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
@@ -154,8 +152,8 @@ class JsonParseStateTest {
     @DisplayName("number() should return Integer for negative integer input")
     void testNumberNegativeInteger() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("-1234");
-        BigDecimal result = parserState.number();
-        assertThat(result).isEqualByComparingTo(new BigDecimal("-1234"));
+        JsonElement.JsonNumber result = parserState.number();
+        assertThat(result).isEqualByComparingTo(new JsonElement.JsonNumber("-1234"));
         assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
@@ -163,8 +161,8 @@ class JsonParseStateTest {
     @DisplayName("number() should return 0 for input -0")
     void testNumberNegative0() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("-0");
-        BigDecimal result = parserState.number();
-        assertThat(result).isEqualByComparingTo("0");
+        JsonElement.JsonNumber result = parserState.number();
+        assertThat(result.value()).isEqualByComparingTo("0");
         assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
@@ -179,8 +177,8 @@ class JsonParseStateTest {
     @DisplayName("number() should return Double for floating point input")
     void testNumberFloat() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("12.34");
-        BigDecimal result = parserState.number();
-        assertThat(result).isEqualByComparingTo("12.34");
+        JsonElement.JsonNumber result = parserState.number();
+        assertThat(result.value()).isEqualByComparingTo("12.34");
         assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
@@ -223,8 +221,8 @@ class JsonParseStateTest {
     @DisplayName("number() should allow exponents with lowercase e")
     void testNumberExponentWithLowercaseE() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("1e2");
-        BigDecimal result = parserState.number();
-        assertThat(result).isEqualByComparingTo("100");
+        JsonElement.JsonNumber result = parserState.number();
+        assertThat(result.value()).isEqualByComparingTo("100");
         assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
@@ -232,8 +230,8 @@ class JsonParseStateTest {
     @DisplayName("number() should allow exponents with capital E")
     void testNumberExponentWithCapitalE() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("1E2");
-        BigDecimal result = parserState.number();
-        assertThat(result).isEqualByComparingTo("100");
+        JsonElement.JsonNumber result = parserState.number();
+        assertThat(result.value()).isEqualByComparingTo("100");
         assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
@@ -241,8 +239,8 @@ class JsonParseStateTest {
     @DisplayName("number() should not throw exception when having the form 0eXXX")
     void testNumberZeroWithExponent() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("0e5");
-        BigDecimal result = parserState.number();
-        assertThat(result).isEqualByComparingTo("0");
+        JsonElement.JsonNumber result = parserState.number();
+        assertThat(result.value()).isEqualByComparingTo("0");
         assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
@@ -250,8 +248,8 @@ class JsonParseStateTest {
     @DisplayName("number() input betweeen 0 and 1 should not throw exception ")
     void testNumberBetween0And1() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("0.1");
-        BigDecimal result = parserState.number();
-        assertThat(result).isEqualByComparingTo("0.1");
+        JsonElement.JsonNumber result = parserState.number();
+        assertThat(result.value()).isEqualByComparingTo("0.1");
         assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
@@ -266,8 +264,8 @@ class JsonParseStateTest {
     @DisplayName("string() should return the input string without quotes")
     void testParseString() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("\"input\"");
-        String result = parserState.string();
-        assertThat(result).isEqualTo("input");
+        JsonElement.JsonString result = parserState.string();
+        assertThat(result.value()).isEqualTo("input");
         assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
@@ -282,8 +280,8 @@ class JsonParseStateTest {
     @DisplayName("string() should return the input string while considering escaped quotes")
     void testParseStringWithEscapedQuote() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("\"a\\\"b\"");
-        String result = parserState.string();
-        assertThat(result).isEqualTo("a\"b");
+        JsonElement.JsonString result = parserState.string();
+        assertThat(result.value()).isEqualTo("a\"b");
         assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
@@ -291,8 +289,8 @@ class JsonParseStateTest {
     @DisplayName("string() should return the input string while considering escaped backslashes")
     void testParseStringWithEscapedBackslash() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("\"a\\\\b\"");
-        String result = parserState.string();
-        assertThat(result).isEqualTo("a\\b");
+        JsonElement.JsonString result = parserState.string();
+        assertThat(result.value()).isEqualTo("a\\b");
         assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
@@ -301,8 +299,8 @@ class JsonParseStateTest {
     @MethodSource("provideInputForTestParseStringWithEscapedControlCharacters")
     void testParseStringWithEscapedControlCharacters(String input, String expected) throws JsonParseException {
         JsonParseState parserState = new JsonParseState("\"" + input + "\"");
-        String result = parserState.string();
-        assertThat(result).isEqualTo(expected);
+        JsonElement.JsonString result = parserState.string();
+        assertThat(result.value()).isEqualTo(expected);
         assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
@@ -310,8 +308,8 @@ class JsonParseStateTest {
     @DisplayName("string() should return the input string while considering escaped unicode characters")
     void testParseStringWithEscapedUnicodeCharacters() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("\"a\\u0041\\u00Ae\"");
-        String result = parserState.string();
-        assertThat(result).isEqualTo("aA\u00AE");
+        JsonElement.JsonString result = parserState.string();
+        assertThat(result.value()).isEqualTo("aA\u00AE");
         assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
@@ -333,9 +331,9 @@ class JsonParseStateTest {
     @DisplayName("member() should return a key-value pair")
     void testMemberShouldReturnKeyValuePair() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("\"key\":\"value\"");
-        Map.Entry<String, Object> member = parserState.member();
+        Map.Entry<String, JsonElement> member = parserState.member();
         assertThat(member.getKey()).isEqualTo("key");
-        assertThat(member.getValue()).isEqualTo("value");
+        assertThat(member.getValue()).isEqualTo(new JsonElement.JsonString("value"));
         assertThat(parserState.reachedEnd()).isEqualTo(true);
 
     }
@@ -344,9 +342,9 @@ class JsonParseStateTest {
     @DisplayName("member() should return a key-value pair ignoring whitespace")
     void testMemberShouldReturnKeyValuePairIgnoringWhitespace() throws JsonParseException {
         JsonParseState parserState = new JsonParseState(" \"key\" : \"value\" ");
-        Map.Entry<String, Object> member = parserState.member();
+        Map.Entry<String, JsonElement> member = parserState.member();
         assertThat(member.getKey()).isEqualTo("key");
-        assertThat(member.getValue()).isEqualTo("value");
+        assertThat(member.getValue()).isEqualTo(new JsonElement.JsonString("value"));
         assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
@@ -354,9 +352,9 @@ class JsonParseStateTest {
     @DisplayName("member() should allow null values")
     void testMemberShouldAllowNullValues() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("\"key\":null");
-        Map.Entry<String, Object> member = parserState.member();
+        Map.Entry<String, JsonElement> member = parserState.member();
         assertThat(member.getKey()).isEqualTo("key");
-        assertThat(member.getValue()).isNull();
+        assertThat(member.getValue()).isEqualTo(JsonElement.NULL);
         assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
@@ -364,8 +362,8 @@ class JsonParseStateTest {
     @DisplayName("object() should return empty Map for empty object")
     void testParseEmptyObject() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("{}");
-        Map<String, Object> result = parserState.object();
-        assertThat(result).isEmpty();
+        JsonElement.JsonObject result = parserState.object();
+        assertThat(result.members()).isEmpty();
         assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
@@ -373,8 +371,8 @@ class JsonParseStateTest {
     @DisplayName("object() should return empty Map for empty object with whitespace")
     void testParseEmptyObjectWithWhitespace() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("{ \n}");
-        Map<String, Object> result = parserState.object();
-        assertThat(result).isEmpty();
+        JsonElement.JsonObject result = parserState.object();
+        assertThat(result.members()).isEmpty();
         assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
@@ -396,8 +394,8 @@ class JsonParseStateTest {
     @DisplayName("object() should return correct result for object with one member")
     void testParseObjectWithOneMember() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("{\"key\":1234}");
-        Map<String, Object> result = parserState.object();
-        assertThat((BigDecimal) result.get("key")).isEqualByComparingTo("1234");
+        JsonElement.JsonObject result = parserState.object();
+        assertThat((JsonElement.JsonNumber) result.get("key")).isEqualByComparingTo(new JsonElement.JsonNumber("1234"));
         assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
@@ -405,10 +403,10 @@ class JsonParseStateTest {
     @DisplayName("object() should return correct result for object with multiple members")
     void testParseObjectWithMultipleMembers() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("{\"key1\":1234,\"key2\":\"string\",\"key3\":null}");
-        Map<String, Object> result = parserState.object();
-        assertThat((BigDecimal) result.get("key1")).isEqualByComparingTo("1234");
-        assertThat(result.get("key2")).isEqualTo("string");
-        assertThat(result.get("key3")).isNull();
+        JsonElement.JsonObject result = parserState.object();
+        assertThat((JsonElement.JsonNumber) result.get("key1")).isEqualByComparingTo(new JsonElement.JsonNumber("1234"));
+        assertThat(result.get("key2")).isEqualTo(new JsonElement.JsonString("string"));
+        assertThat(result.get("key3")).isEqualTo(JsonElement.NULL);
         assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
@@ -416,10 +414,10 @@ class JsonParseStateTest {
     @DisplayName("object() should return correct result for object with multiple members ignoring whitespace")
     void testParseObjectWithMultipleMembersIgnoringWhitespace() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("{ \"key1\" : 1234 , \"key2\" : \"string\" , \"key3\" : null }");
-        Map<String, Object> result = parserState.object();
-        assertThat((BigDecimal) result.get("key1")).isEqualByComparingTo("1234");
-        assertThat(result.get("key2")).isEqualTo("string");
-        assertThat(result.get("key3")).isNull();
+        JsonElement.JsonObject result = parserState.object();
+        assertThat((JsonElement.JsonNumber) result.get("key1")).isEqualByComparingTo(new JsonElement.JsonNumber("1234"));
+        assertThat(result.get("key2")).isEqualTo(new JsonElement.JsonString("string"));
+        assertThat(result.get("key3")).isEqualTo(JsonElement.NULL);
         assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
@@ -427,8 +425,8 @@ class JsonParseStateTest {
     @DisplayName("array() should return empty Array for empty input")
     void testParseEmptyArray() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("[]");
-        Object[] result = parserState.array();
-        assertThat(result).isEmpty();
+        JsonElement.JsonArray result = parserState.array();
+        assertThat(result.elements()).isEmpty();
         assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
@@ -436,8 +434,8 @@ class JsonParseStateTest {
     @DisplayName("array() should return empty Array for empty input with whitespace")
     void testParseEmptyArrayWithWhitespace() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("[ \n]");
-        Object[] result = parserState.array();
-        assertThat(result).isEmpty();
+        JsonElement.JsonArray result = parserState.array();
+        assertThat(result.elements()).isEmpty();
         assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
@@ -459,9 +457,9 @@ class JsonParseStateTest {
     @DisplayName("array() should return correct result for array with one element")
     void testParseArrayWithOneElement() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("[\"string\"]");
-        Object[] result = parserState.array();
-        assertThat(result).hasSize(1);
-        assertThat(result[0]).isInstanceOf(String.class).isEqualTo("string");
+        JsonElement.JsonArray result = parserState.array();
+        assertThat(result.elements()).hasSize(1);
+        assertThat(result.get(0)).isEqualTo(new JsonElement.JsonString("string"));
         assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
@@ -469,11 +467,11 @@ class JsonParseStateTest {
     @DisplayName("array() should return correct result for array with multiple elements")
     void testParseArrayWithMultipleElements() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("[\"string1\",\"string2\",\"string3\"]");
-        Object[] result = parserState.array();
-        assertThat(result).hasSize(3);
-        assertThat(result[0]).isInstanceOf(String.class).isEqualTo("string1");
-        assertThat(result[1]).isInstanceOf(String.class).isEqualTo("string2");
-        assertThat(result[2]).isInstanceOf(String.class).isEqualTo("string3");
+        JsonElement.JsonArray result = parserState.array();
+        assertThat(result.elements()).hasSize(3);
+        assertThat(result.get(0)).isEqualTo(new JsonElement.JsonString("string1"));
+        assertThat(result.get(1)).isEqualTo(new JsonElement.JsonString("string2"));
+        assertThat(result.get(2)).isEqualTo(new JsonElement.JsonString("string3"));
         assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
@@ -481,11 +479,11 @@ class JsonParseStateTest {
     @DisplayName("array() should return correct result for array with multiple elements and whitespace")
     void testParseArrayWithMultipleElementsAndWhitespace() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("[ \"string1\" , \"string2\" , \"string3\" ]");
-        Object[] result = parserState.array();
-        assertThat(result).hasSize(3);
-        assertThat(result[0]).isInstanceOf(String.class).isEqualTo("string1");
-        assertThat(result[1]).isInstanceOf(String.class).isEqualTo("string2");
-        assertThat(result[2]).isInstanceOf(String.class).isEqualTo("string3");
+        JsonElement.JsonArray result = parserState.array();
+        assertThat(result.elements()).hasSize(3);
+        assertThat(result.get(0)).isEqualTo(new JsonElement.JsonString("string1"));
+        assertThat(result.get(1)).isEqualTo(new JsonElement.JsonString("string2"));
+        assertThat(result.get(2)).isEqualTo(new JsonElement.JsonString("string3"));
         assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
@@ -493,8 +491,8 @@ class JsonParseStateTest {
     @DisplayName("value() should return null for null input")
     void testParseNullValue() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("null");
-        Object result = parserState.value();
-        assertThat(result).isNull();
+        JsonElement result = parserState.value();
+        assertThat(result).isEqualTo(JsonElement.NULL);
         assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
@@ -502,10 +500,8 @@ class JsonParseStateTest {
     @DisplayName("value() should return boolean true for boolean input with value true")
     void testParseBooleanValueTrue() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("true");
-        Object result = parserState.value();
-        assertThat(result)
-                .isInstanceOf(Boolean.class)
-                .isEqualTo(Boolean.TRUE);
+        JsonElement result = parserState.value();
+        assertThat(result).isEqualTo(JsonElement.JsonBoolean.TRUE);
         assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
@@ -513,10 +509,8 @@ class JsonParseStateTest {
     @DisplayName("value() should return boolean false for boolean input with value false")
     void testParseBooleanValueFalse() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("false");
-        Object result = parserState.value();
-        assertThat(result)
-                .isInstanceOf(Boolean.class)
-                .isEqualTo(Boolean.FALSE);
+        JsonElement result = parserState.value();
+        assertThat(result).isEqualTo(JsonElement.JsonBoolean.FALSE);
         assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
@@ -524,9 +518,9 @@ class JsonParseStateTest {
     @DisplayName("value() should return integer for integer input")
     void testParseIntegerValue() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("2345");
-        Object result = parserState.value();
-        assertThat(result).isInstanceOf(BigDecimal.class);
-        assertThat((BigDecimal) result).isEqualByComparingTo("2345");
+        JsonElement result = parserState.value();
+        assertThat(result).isInstanceOf(JsonElement.JsonNumber.class);
+        assertThat((JsonElement.JsonNumber) result).isEqualByComparingTo(new JsonElement.JsonNumber("2345"));
         assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
@@ -534,9 +528,9 @@ class JsonParseStateTest {
     @DisplayName("value() should return integer for negative integer input")
     void testParseNegativeIntegerValue() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("-2345");
-        Object result = parserState.value();
-        assertThat(result).isInstanceOf(BigDecimal.class);
-        assertThat((BigDecimal) result).isEqualByComparingTo("-2345");
+        JsonElement result = parserState.value();
+        assertThat(result).isInstanceOf(JsonElement.JsonNumber.class);
+        assertThat((JsonElement.JsonNumber) result).isEqualByComparingTo(new JsonElement.JsonNumber("-2345"));
         assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
@@ -544,10 +538,8 @@ class JsonParseStateTest {
     @DisplayName("value() should return unquoted string for quoted string input")
     void testParseStringValue() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("\"value\"");
-        Object result = parserState.value();
-        assertThat(result)
-                .isInstanceOf(String.class)
-                .isEqualTo("value");
+        JsonElement result = parserState.value();
+        assertThat(result).isEqualTo(new JsonElement.JsonString("value"));
         assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 
@@ -555,8 +547,10 @@ class JsonParseStateTest {
     @DisplayName("value() should return Map for object input")
     void testParseObjectValue() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("{}");
-        Object result = parserState.value();
+        JsonElement result = parserState.value();
         assertThat(result)
+                .isInstanceOf(JsonElement.JsonObject.class)
+                .extracting(jsonElement -> ((JsonElement.JsonObject) jsonElement).members())
                 .asInstanceOf(InstanceOfAssertFactories.MAP)
                 .isEmpty();
         assertThat(parserState.reachedEnd()).isEqualTo(true);
@@ -566,9 +560,11 @@ class JsonParseStateTest {
     @DisplayName("value() should return Array for array input")
     void testParseArrayValue() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("[]");
-        Object result = parserState.value();
+        JsonElement result = parserState.value();
         assertThat(result)
-                .asInstanceOf(InstanceOfAssertFactories.ARRAY)
+                .isInstanceOf(JsonElement.JsonArray.class)
+                .extracting(jsonElement -> ((JsonElement.JsonArray) jsonElement).elements())
+                .asInstanceOf(InstanceOfAssertFactories.ITERABLE)
                 .isEmpty();
         assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
@@ -584,9 +580,11 @@ class JsonParseStateTest {
     @DisplayName("element() should return value ignoring leading whitespace")
     void testElementLeadingWhitespace() throws JsonParseException {
         JsonParseState parserState = new JsonParseState(" []");
-        Object result = parserState.element();
+        JsonElement result = parserState.element();
         assertThat(result)
-                .asInstanceOf(InstanceOfAssertFactories.ARRAY)
+                .isInstanceOf(JsonElement.JsonArray.class)
+                .extracting(jsonElement -> ((JsonElement.JsonArray) jsonElement).elements())
+                .asInstanceOf(InstanceOfAssertFactories.ITERABLE)
                 .isEmpty();
         assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
@@ -595,9 +593,11 @@ class JsonParseStateTest {
     @DisplayName("element() should return value ignoring trailing whitespace")
     void testElementTrailingWhitespace() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("[]  ");
-        Object result = parserState.element();
+        JsonElement result = parserState.element();
         assertThat(result)
-                .asInstanceOf(InstanceOfAssertFactories.ARRAY)
+                .isInstanceOf(JsonElement.JsonArray.class)
+                .extracting(jsonElement -> ((JsonElement.JsonArray) jsonElement).elements())
+                .asInstanceOf(InstanceOfAssertFactories.ITERABLE)
                 .isEmpty();
         assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
@@ -606,8 +606,8 @@ class JsonParseStateTest {
     @DisplayName("json() should return element")
     void testJson() throws JsonParseException {
         JsonParseState parserState = new JsonParseState("  \"test\"  ");
-        Object result = parserState.json();
-        assertThat(result).isEqualTo("test");
+        JsonElement result = parserState.json();
+        assertThat(result).isEqualTo(new JsonElement.JsonString("test"));
         assertThat(parserState.reachedEnd()).isEqualTo(true);
     }
 

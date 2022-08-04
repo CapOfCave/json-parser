@@ -5,10 +5,10 @@ import me.kecker.jsonparser.exceptions.IllegalTokenException;
 import me.kecker.jsonparser.exceptions.JsonParseException;
 import me.kecker.jsonparser.exceptions.UnexpectedCharacterException;
 
-import javax.lang.model.type.NullType;
 import java.math.BigDecimal;
 import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,7 +59,7 @@ public class JsonParseState {
         }
     }
 
-    public NullType nullType() throws JsonParseException {
+    public JsonElement.JsonNull nullType() throws JsonParseException {
         StringBuilder wordBuilder = new StringBuilder();
         while (!reachedEnd() && Character.isAlphabetic(current())) {
             wordBuilder.append(current());
@@ -69,10 +69,10 @@ public class JsonParseState {
         if (!word.equals("null")) {
             throw new IllegalTokenException("Input '" + word + "' is not a valid nullType.");
         }
-        return null;
+        return JsonElement.NULL;
     }
 
-    public boolean bool() throws IllegalTokenException {
+    public JsonElement.JsonBoolean bool() throws IllegalTokenException {
         StringBuilder wordBuilder = new StringBuilder();
         while (!reachedEnd() && Character.isAlphabetic(current())) {
             wordBuilder.append(current());
@@ -80,15 +80,15 @@ public class JsonParseState {
         }
         String word = wordBuilder.toString();
         if (word.equals("true")) {
-            return true;
+            return JsonElement.JsonBoolean.TRUE;
         }
         if (word.equals("false")) {
-            return false;
+            return JsonElement.JsonBoolean.FALSE;
         }
         throw new IllegalTokenException("Input '" + word + "' is not a valid boolean.");
     }
 
-    public BigDecimal number() throws JsonParseException {
+    public JsonElement.JsonNumber number() throws JsonParseException {
         if (current() == PLUS) {
             throw new JsonParseException("Number must not start with a plus");
         }
@@ -118,7 +118,7 @@ public class JsonParseState {
         }
 
         try {
-            return new BigDecimal(stringValue);
+            return new JsonElement.JsonNumber(new BigDecimal(stringValue));
         } catch (NumberFormatException e) {
             throw new IllegalNumberException(e);
         }
@@ -135,7 +135,11 @@ public class JsonParseState {
 
     }
 
-    public String string() throws JsonParseException {
+    public JsonElement.JsonString string() throws JsonParseException {
+        return new JsonElement.JsonString(stringRaw());
+    }
+
+    private String stringRaw() throws JsonParseException {
         assertCharacterAndAdvance(QUOTE);
         StringBuilder wordBuilder = new StringBuilder();
         while (!reachedEnd() && current() != QUOTE) {
@@ -197,36 +201,36 @@ public class JsonParseState {
         return i;
     }
 
-    public Map<String, Object> object() throws JsonParseException {
+    public JsonElement.JsonObject object() throws JsonParseException {
         assertCharacterAndAdvance(CURLY_BRACE_OPEN);
         whitespace();
-        Map<String, Object> members = new HashMap<>();
+        Map<String, JsonElement> members = new HashMap<>();
         if (!reachedEnd() && current() != CURLY_BRACE_CLOSE) {
-            Map.Entry<String, Object> firstMember = member();
+            Map.Entry<String, JsonElement> firstMember = member();
             members.put(firstMember.getKey(), firstMember.getValue());
             while (!reachedEnd() && current() == COMMA) {
                 assertCharacterAndAdvance(COMMA);
-                Map.Entry<String, Object> additionalMember = member();
+                Map.Entry<String, JsonElement> additionalMember = member();
                 members.put(additionalMember.getKey(), additionalMember.getValue());
             }
         }
         assertCharacterAndAdvance(CURLY_BRACE_CLOSE);
-        return members;
+        return new JsonElement.JsonObject(members);
     }
 
-    public Map.Entry<String, Object> member() throws JsonParseException {
+    public Map.Entry<String, JsonElement> member() throws JsonParseException {
         whitespace();
-        String key = string();
+        String key = stringRaw();
         whitespace();
         assertCharacterAndAdvance(COLON);
-        Object value = element();
+        JsonElement value = element();
         return new AbstractMap.SimpleImmutableEntry<>(key, value);
     }
 
-    public Object[] array() throws JsonParseException {
+    public JsonElement.JsonArray array() throws JsonParseException {
         assertCharacterAndAdvance(BRACKETS_OPEN);
         whitespace();
-        List<Object> elements = new ArrayList<>();
+        List<JsonElement> elements = new ArrayList<>();
         if (!reachedEnd() && current() != BRACKETS_CLOSE) {
             elements.add(element());
             while (!reachedEnd() && current() == COMMA) {
@@ -235,7 +239,7 @@ public class JsonParseState {
             }
         }
         assertCharacterAndAdvance(BRACKETS_CLOSE);
-        return elements.toArray(Object[]::new);
+        return new JsonElement.JsonArray(Collections.unmodifiableList(elements));
     }
 
     private void assertCharacterAndAdvance(char expected) throws UnexpectedCharacterException {
@@ -252,7 +256,7 @@ public class JsonParseState {
         }
     }
 
-    public Object value() throws JsonParseException {
+    public JsonElement value() throws JsonParseException {
         if (reachedEnd()) {
             throw new JsonParseException("Unexpected EOI");
         }
@@ -271,15 +275,15 @@ public class JsonParseState {
         };
     }
 
-    public Object element() throws JsonParseException {
+    public JsonElement element() throws JsonParseException {
         whitespace();
-        Object value = value();
+        JsonElement value = value();
         whitespace();
         return value;
     }
 
-    public Object json() throws JsonParseException {
-        Object element = element();
+    public JsonElement json() throws JsonParseException {
+        JsonElement element = element();
         if (!reachedEnd()) {
             throw new JsonParseException("JSON standard allows only one top-level value.");
         }
